@@ -1,0 +1,26 @@
+{
+    "name": "make-element",
+    "version": "1.0.0",
+    "description": "Create custom elements without boilerplate",
+    "main": "dist/index.js",
+    "module": "dist/index.module.js",
+    "repository": {},
+    "keywords": [
+        "web-components",
+        "custom-element",
+        "element",
+        "html",
+        "shadow-dom"
+    ],
+    "scripts": {
+        "build": "rollup -c rollup.config.js"
+    },
+    "author": "Marco Scannadinari <m@scannadinari.co.uk>",
+    "license": "MIT",
+    "devDependencies": {
+        "eslint": "^3.15.0",
+        "rollup": "^0.41.4",
+        "rollup-plugin-babili": "^1.1.1",
+        "rollup-plugin-json": "^2.1.0"
+    }
+}
