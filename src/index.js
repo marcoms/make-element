@@ -255,6 +255,18 @@ function makeElement(def={}) {
 		}
 	};
 
+	for (const fnName of Object.keys(def.methods)) {
+		const fn = def.methods[fnName];
+
+		if (typeof fn !== 'function') {
+			throw new TypeError(
+				`${fnName} must be a function (got ${fn})`
+			);
+		}
+
+		CustomElement.prototype[fnName] = fn;
+	}
+
 	return CustomElement;
 }
 

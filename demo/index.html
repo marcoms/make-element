@@ -19,6 +19,12 @@
                     },
                 },
 
+                methods: {
+                    whoami() {
+                        console.log('I am a custom-element and I have a prop =', this.prop);
+                    },
+                },
+
                 template: 'I am a custom element',
                 shadowDom: true,
 
