@@ -1,3 +1,5 @@
+import {version} from '../package.json';
+
 function identity(val) {
 	// nothing special here
 	return val;
@@ -269,5 +271,12 @@ function makeElement(def={}) {
 
 	return CustomElement;
 }
+
+const [versionMajor, versionMinor, versionPatch] = version.split('.');
+makeElement.version = {
+	major: Number.parseInt(versionMajor, 10),
+	minor: Number.parseInt(versionMinor, 10),
+	patch: Number.parseInt(versionPatch, 10),
+};
 
 export default makeElement;
