@@ -196,6 +196,16 @@ function makeElement(def={}) {
 				this.attachShadow({mode: 'open'});
 			}
 
+			const cacheIds = (context) => {
+				this.$ = {};
+
+				// let's hope no-one has empty id attributes
+				const elsWithIds = context.querySelectorAll('[id]');
+				for (const el of elsWithIds) {
+					this.$[el.id] = el;
+				}
+			};
+
 			if (hasLocalTemplate) {
 				if (def.shadowDom) {
 					this.shadowRoot.innerHTML = def.template;
@@ -221,6 +231,14 @@ function makeElement(def={}) {
 						this.innerHTML = template;
 					}
 				});
+			}
+
+			if (def.cacheIds !== false) {
+				if (def.shadowDom) {
+					cacheIds(this.shadowRoot);
+				} else {
+					cacheIds(this);
+				}
 			}
 		}
 
