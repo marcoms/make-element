@@ -1,11 +1,11 @@
 import {version} from '../package.json';
 
+function noop() {}
+
 function identity(val) {
 	// nothing special here
 	return val;
 }
-
-function noop() {}
 
 function makeElement(def={}) {
 	const props = def.props;
@@ -70,9 +70,14 @@ function makeElement(def={}) {
 			get = propDef.get;
 		}
 
-		let set = identity;
+		let set = noop;
 		if (typeof propDef.set === 'function') {
 			set = propDef.set;
+		}
+
+		let coerce = identity;
+		if (typeof propDef.coerce === 'function') {
+			coerce = propDef.coerce;
 		}
 
 		registeredProps[prop] = {
@@ -95,6 +100,9 @@ function makeElement(def={}) {
 
 			// setter function
 			set,
+
+			// function to modify the value passed to the setter function
+			coerce,
 
 			// if the property has been set before
 			hasSet: false,
@@ -121,11 +129,22 @@ function makeElement(def={}) {
 				internalProp.fromAttr = internalProp.fromAttr.bind(this);
 				internalProp.get = internalProp.get.bind(this);
 				internalProp.set = internalProp.set.bind(this);
+				internalProp.coerce = internalProp.coerce.bind(this);
 
 				Object.defineProperty(this, prop, {
 					set(val) {
-						const propVal = internalProp.set(val);
+						let propVal = val;
+
+						// we don't coerce the user-defined initial value
+
+						if (!internalProp.settingInitialValue) {
+							propVal = internalProp.coerce(val);
+						} else {
+							internalProp.settingInitialValue = false;
+						}
+
 						internalProp.val = propVal;
+						internalProp.set(propVal);
 
 						/*
 
@@ -220,6 +239,8 @@ function makeElement(def={}) {
 					&& internalProp.val !== null
 					&& !internalProp.hasSet
 				) {
+					internalProp.settingInitialValue = true;
+
 					// kick off property setter
 					this[prop] = internalProp.val;
 				}
@@ -262,7 +283,7 @@ function makeElement(def={}) {
 
 		if (typeof fn !== 'function') {
 			throw new TypeError(
-				`${fnName} must be a function (got ${fn})`
+				`${fnName} must be a function (got ${fn})`,
 			);
 		}
 
