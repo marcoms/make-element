@@ -1,5 +1,5 @@
 {
-    "name": "make-element",
+    "name": "@marcoms/make-element",
     "version": "2.1.0",
     "description": "Create custom elements without boilerplate",
     "main": "dist/index.js",
