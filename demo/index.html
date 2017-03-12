@@ -5,36 +5,41 @@
         <title>test</title>
     </head>
     <body>
-        <custom-element></custom-element>
+        <counter-element></counter-element>
 
         <script src="/dist/index.js"></script>
         <script>
-            // TODO: make a better demo!
-
-            const def = {
-                props: {
-                    prop: {
-                        attr: 'prop-attr',
-                        init: 'example default',
+        const CounterElement = makeElement({
+            props: {
+                counter: {
+                    init: 1,
+                    set(counter) {
+                        console.log('counter: setting counter text content');
+                        this.$['counter'].textContent = counter;
                     },
                 },
+            },
 
-                methods: {
-                    whoami() {
-                        console.log('I am a custom-element and I have a prop =', this.prop);
-                    },
+            methods: {
+                increment() {
+                    console.log('counter: incrementing counter by 1');
+                    ++this.counter;
                 },
+            },
 
-                template: 'I am a custom element',
-                shadowDom: true,
+            ready() {
+                console.log('counter: setting click listener');
+                this.$['increment-button'].onclick = () => { this.increment() };
+            },
 
-                ready() {
-                    console.log('Hello from the ready function');
-                },
-            };
+            shadowDom: true,
+            template: `
+                <div id="counter"></div>
+                <button id="increment-button">Increment</button>
+            `,
+        });
 
-            const CustomElement = makeElement(def);
-            customElements.define('custom-element', CustomElement);
+        customElements.define('counter-element', CounterElement);
         </script>
     </body>
 </html>
