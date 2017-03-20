@@ -275,14 +275,14 @@ function makeElement(def={}) {
 			if (val !== oldVal) {
 				// convenience aliases
 				const internalAttr = registeredAttrs[attrName];
-				const propName = internalAttr.prop;
-				const internalProp = registeredProps[propName];
-
 				internalAttr.val = val;
 
 				if (internalAttr.needsPropagation) {
 					// propagation should only occur once
 					internalAttr.needsPropagation = false;
+
+					const propName = internalAttr.prop;
+					const internalProp = registeredProps[propName];
 
 					const propVal = internalProp.fromAttr(val);
 					this[propName] = propVal;
