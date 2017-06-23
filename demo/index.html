@@ -1,47 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>test</title>
-    </head>
-    <body>
-        <counter-element></counter-element>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>make-element demo</title>
+	</head>
 
-        <script src="/dist/index.js"></script>
-        <script>
-        console.log(makeElement);
+	<body>
+		<code>&lt;counter-element&gt;&lt;/counter-element&gt;</code>
+		<counter-element></counter-element>
 
-        const CounterElement = makeElement({
-            props: {
-                counter: {
-                    init: 1,
-                    set(counter) {
-                        console.log('counter: setting counter text content');
-                        this.$['counter'].textContent = counter;
-                    },
-                },
-            },
-
-            methods: {
-                increment() {
-                    console.log('counter: incrementing counter by 1');
-                    ++this.counter;
-                },
-            },
-
-            ready() {
-                console.log('counter: setting click listener');
-                this.$['increment-button'].onclick = () => { this.increment() };
-            },
-
-            shadowDom: true,
-            template: `
-                <div id="counter"></div>
-                <button id="increment-button">Increment</button>
-            `,
-        });
-
-        customElements.define('counter-element', CounterElement);
-        </script>
-    </body>
+		<script src="build/main.js"></script>
+	</body>
 </html>
