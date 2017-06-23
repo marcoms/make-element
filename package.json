@@ -18,9 +18,8 @@
     "author": "Marco Scannadinari <m@scannadinari.co.uk>",
     "license": "MIT",
     "devDependencies": {
-        "eslint": "^3.15.0",
-        "rollup": "^0.41.5",
-        "rollup-plugin-babili": "^1.1.1",
-        "rollup-plugin-json": "^2.1.0"
-    }
+        "babili-webpack-plugin": "^0.1.1",
+        "eslint": "^3.15.0"
+    },
+    "dependencies": {}
 }
