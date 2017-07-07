@@ -58,7 +58,11 @@ Produces a custom element class that can be passed to `customElements.define`.
 
 #### `props`
 
-Collection of properties to register for the custom element. All configuration fields (`attr`, `get`, `set`, &hellip;) are optional.
+Collection of properties to register for the custom element. All configuration fields (`attr`, `get`, `set`, &hellip;) are optional
+
+##### `init`
+
+Initial value of the property to use, unless the property is bound to an attribute with `attr` (e.g. `attr: 'foo'`) *and* initialized in markup (e.g. `<x-element foo="24"></x-element>`)
 
 ##### `attr`
 
@@ -68,7 +72,7 @@ Attribute name to bind to
 
 Every time the property is set, the value will flow into the attribute name specified here via `coerce()`, then `toAttr()`
 
-A property can be initialised through markup by supplying an attribute value, but subsequent changes to the attribute will *not* flow back to the property -- binding is therefore *one-way* from property to attribute
+A property can be initialised through markup by supplying an attribute value, but subsequent changes to the attribute will not flow back to the property -- binding is therefore **one-way from property to attribute**
 
 ###### Example
 
@@ -94,7 +98,7 @@ myElement.myProp;  // -> 32 (no change)
 
 ##### `get(val)`
 
-Getter function
+Getter function called when the property is accessed
 
 ###### Example
 
@@ -107,7 +111,7 @@ get(fullName) {
 
 ##### `set(val)`
 
-Setter function
+Setter function called on every update to the property value
 
 ###### Example
 
@@ -119,7 +123,7 @@ set(val) {
 
 ##### `coerce(val)`
 
-Function to modify a property's value before it is passed to `set()` and stored
+Function used to modify the property value before it is stored and passed to `set()`
 
 ###### Example
 
@@ -131,11 +135,11 @@ coerce(val) {
 
 ##### `toAttr(val)`
 
-Function to modify the value to store as an attribute
+Function used to modify the property value when storing into an attribute
 
 ##### `fromAttr(val)`
 
-Function to modify the value retreived initially from the attribute
+Function used to modify the attribute value if the property is initialized from the attribute
 
 #### `methods`
 
@@ -161,6 +165,8 @@ myElement.myMethod();  // -> hello from myMethod
 
 If true, shadow DOM will be used for templating
 
+See [http://caniuse.com/#feat=shadowdomv1](http://caniuse.com/#feat=shadowdomv1)
+
 #### `template`
 
 HTML template to initialise the custom element with
@@ -171,7 +177,7 @@ If `templateUrl` is also defined, `template` will be used
 
 Like `template`, but fetches the template from this URL
 
-If `template` is also defined, `template` will be used.
+If `template` is also defined, `template` will be used
 
 #### `cacheIds`
 
