@@ -1,6 +1,6 @@
 {
     "name": "@marcoms/make-element",
-    "version": "3.0.0",
+    "version": "3.1.0",
     "description": "Create custom elements without boilerplate",
     "main": "build/make-element.js",
     "repository": {},
@@ -9,7 +9,8 @@
         "custom-element",
         "element",
         "html",
-        "shadow-dom"
+        "shadow-dom",
+        "typescript"
     ],
     "scripts": {
         "build": "webpack"
