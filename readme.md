@@ -48,7 +48,7 @@ customElements.define('counter-element', CounterElement);
 
 ### Result
 
-![Counter demo](res/counter-demo.gif)
+![Counter demo](https://raw.githubusercontent.com/marcoms/make-element/74297415/res/counter-demo.gif)
 
 ## API
 
