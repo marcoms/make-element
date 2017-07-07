@@ -1,6 +1,6 @@
 {
     "name": "@marcoms/make-element",
-    "version": "3.1.0",
+    "version": "3.1.1",
     "description": "Create custom elements without boilerplate",
     "main": "build/make-element.js",
     "repository": {},
