@@ -1,11 +1,15 @@
 export interface ElementDef {
-	props?: any;
+	props?: PropDefs;
 	shadowDom?: boolean;
 	template?: string;
 	templateUrl?: string;
 	cacheIds?: boolean;
 	methods?: MethodsDef;
 	ready?: ArbitraryFn;
+}
+
+export interface PropDefs {
+	[index: string]: PropDef;
 }
 
 export interface PropDef {
@@ -68,8 +72,10 @@ interface RegisteredAttrs {
 
 interface InternalAttr extends RegisteredAttr {}
 
-function noop() {}
+// utility functions
 
+function noop() {}
+function consume(val: any) {}
 function identity(val: any) {
 	// nothing special here
 	return val;
@@ -139,7 +145,7 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 			get = propDef.get;
 		}
 
-		let set = noop;
+		let set = consume;
 		if (typeof propDef.set === 'function') {
 			set = propDef.set;
 		}
