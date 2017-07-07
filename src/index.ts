@@ -1,11 +1,81 @@
+export interface ElementDef {
+	props?: any;
+	shadowDom?: boolean;
+	template?: string;
+	templateUrl?: string;
+	cacheIds?: boolean;
+	methods?: MethodsDef;
+	ready?: ArbitraryFn;
+}
+
+export interface PropDef {
+	attr?: string;
+	set?: SetFn;
+	get?: GetFn;
+	toAttr?: ToAttrFn;
+	fromAttr?: FromAttrFn;
+	coerce?: CoerceFn;
+	init?: any;
+}
+
+export interface ArbitraryFn { (...args: any[]): any; }
+export interface GetFn { (val: any): void; }
+export interface SetFn { (val: any): any; }
+export interface CoerceFn { (val: any): any; }
+export interface FromAttrFn { (val: string): any; }
+export interface ToAttrFn { (val: any): string; }
+
+export interface MethodsDef {
+	[index: string]: ArbitraryFn;
+}
+
+export interface IdMap {
+	[index: string]: HTMLElement;
+}
+
+export interface CustomElementClass extends Function {
+	new (): CustomElement;
+}
+
+export interface CustomElement extends HTMLElement {
+	$: IdMap;
+}
+
+// private interfaces
+
+interface RegisteredProp extends PropDef {
+	val: any;
+	hasSet: boolean;
+}
+
+interface RegisteredProps {
+	[index: string]: RegisteredProp;
+}
+
+interface InternalProp extends RegisteredProp {
+	settingInitialValue: boolean;
+}
+
+interface RegisteredAttr {
+	val: string | null;
+	propName: string;
+	needsPropagation: boolean;
+}
+
+interface RegisteredAttrs {
+	[index: string]: RegisteredAttr;
+}
+
+interface InternalAttr extends RegisteredAttr {}
+
 function noop() {}
 
-function identity(val) {
+function identity(val: any) {
 	// nothing special here
 	return val;
 }
 
-function makeElement(def={}) {
+function makeElement(def: ElementDef = {}): CustomElementClass {
 	const props = def.props;
 
 	// whether the connectedCallback has been run
@@ -17,13 +87,14 @@ function makeElement(def={}) {
 	}
 
 	// used to keep track of registered properties/attributes
-	const registeredProps = {};
-	const registeredAttrs = {};
+	const registeredProps: RegisteredProps = {};
+	const registeredAttrs: RegisteredAttrs = {};
 
-	for (const prop of Object.keys(props)) {
+	// we need to access the property name through Object.keys
+	for (const propName of Object.keys(props)) {
 		// populated registeredProps/Attrs objects
 
-		const propDef = props[prop];
+		const propDef = props[propName];
 
 		let val = null;
 		if (propDef.init !== undefined) {
@@ -33,18 +104,18 @@ function makeElement(def={}) {
 
 		let hasAttr = typeof propDef.attr === 'string';
 
-		let attr = null;
+		let attrName = null;
 		if (hasAttr) {
-			attr = propDef.attr;
+			attrName = propDef.attr;
 
 			// register attribute internally
 
-			registeredAttrs[attr] = {
+			registeredAttrs[attrName] = {
 				// internal value
 				val: null,
 
 				// linked property name
-				prop,
+				propName,
 
 				// whether the attribute needs to be propagated to the
 				// property
@@ -78,12 +149,12 @@ function makeElement(def={}) {
 			coerce = propDef.coerce;
 		}
 
-		registeredProps[prop] = {
+		registeredProps[propName] = {
 			// internal value
 			val,
 
 			// linked attribute name
-			attr,
+			attr: attrName,
 
 			// function used to produce an attribute value from a
 			// property value
@@ -109,18 +180,20 @@ function makeElement(def={}) {
 
 	const observedAttrs = Object.keys(registeredAttrs);
 
-	const CustomElement = class extends HTMLElement {
+	const DefinableCustomElement: CustomElementClass = class extends HTMLElement {
+		$: IdMap;
+
 		constructor() {
 			super();
 
 			readyFn = readyFn.bind(this);
 
-			for (const prop of Object.keys(registeredProps)) {
+			for (const propName of Object.keys(registeredProps)) {
 				// convenience aliases
-				const internalProp = registeredProps[prop];
+				const internalProp = registeredProps[propName] as InternalProp;
 				const hasAttr = typeof internalProp.attr === 'string';
 				const attrName = internalProp.attr;
-				const internalAttr = registeredAttrs[attrName];
+				const internalAttr = registeredAttrs[attrName] as InternalAttr;
 
 				// bind property methods to element context
 				internalProp.toAttr = internalProp.toAttr.bind(this);
@@ -129,7 +202,7 @@ function makeElement(def={}) {
 				internalProp.set = internalProp.set.bind(this);
 				internalProp.coerce = internalProp.coerce.bind(this);
 
-				Object.defineProperty(this, prop, {
+				Object.defineProperty(this, propName, {
 					set(val) {
 						let propVal = val;
 
@@ -208,7 +281,7 @@ function makeElement(def={}) {
 					} else {
 						// 404 et al
 						throw new Error(
-							`Couldn't fetch template at ${templateUrl}. ` +
+							`Couldn't fetch template at ${def.templateUrl}. ` +
 							`Got HTTP status code ${status}`,
 						);
 					}
@@ -222,17 +295,24 @@ function makeElement(def={}) {
 			}
 
 			if (def.cacheIds !== false) {
+				console.log('caching ids');
 				this.$ = {};
 
-				let context = this;
+				let elsWithIds: NodeList;
 				if (def.shadowDom) {
-					context = this.shadowRoot;
+					elsWithIds = this.shadowRoot.querySelectorAll('[id]');
+				} else {
+					elsWithIds = this.querySelectorAll('[id]');
 				}
 
-				// let's hope no-one has empty id attributes
-				const elsWithIds = context.querySelectorAll('[id]');
+				console.log(elsWithIds);
+
 				for (const el of elsWithIds) {
-					this.$[el.id] = el;
+					const castEl = el as HTMLElement;
+
+					console.log('castEl', castEl);
+
+					this.$[castEl.id] = castEl;
 				}
 			}
 		}
@@ -244,8 +324,8 @@ function makeElement(def={}) {
 
 			// only run once
 
-			for (const prop of Object.keys(props)) {
-				const internalProp = registeredProps[prop];
+			for (const propName of Object.keys(props)) {
+				const internalProp = registeredProps[propName] as InternalProp;
 
 				if (
 					internalProp.val !== undefined
@@ -255,7 +335,7 @@ function makeElement(def={}) {
 					internalProp.settingInitialValue = true;
 
 					// kick off property setter
-					this[prop] = internalProp.val;
+					this[propName] = internalProp.val;
 				}
 			}
 
@@ -269,15 +349,17 @@ function makeElement(def={}) {
 			// only do work if the new value differs
 			if (val !== oldVal) {
 				// convenience aliases
-				const internalAttr = registeredAttrs[attrName];
+				const internalAttr = registeredAttrs[attrName] as InternalAttr;
 				internalAttr.val = val;
 
 				if (internalAttr.needsPropagation) {
+					console.log('setting prop');
+
 					// propagation should only occur once
 					internalAttr.needsPropagation = false;
 
-					const propName = internalAttr.prop;
-					const internalProp = registeredProps[propName];
+					const propName = internalAttr.propName;
+					const internalProp = registeredProps[propName] as InternalProp;
 
 					const propVal = internalProp.fromAttr(val);
 					this[propName] = propVal;
@@ -300,10 +382,10 @@ function makeElement(def={}) {
 			);
 		}
 
-		CustomElement.prototype[fnName] = fn;
+		DefinableCustomElement.prototype[fnName] = fn;
 	}
 
-	return CustomElement;
+	return DefinableCustomElement;
 }
 
-module.exports = makeElement;
+export default makeElement;

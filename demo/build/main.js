@@ -33,6 +33,9 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -60,24 +63,43 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function(a,b){ true?module.exports=b():'function'==typeof define&&define.amd?define([],b):'object'==typeof exports?exports.makeElement=b():a.makeElement=b()})(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.i=function(a){return a},b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a['default']}:function(){return a};return b.d(c,'a',c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p='',b(b.s=0)}([function(a,b){'use strict';function c(){}function d(a){return a}Object.defineProperty(b,'__esModule',{value:!0}),b['default']=function(a={}){const b=a.props;let e=!1,f=c;'function'==typeof a.ready&&(f=a.ready);const g={},h={};for(const e of Object.keys(b)){const a=b[e];let f=null;a.init!==void 0&&(f=a.init);let i='string'==typeof a.attr,j=null;i&&(j=a.attr,h[j]={val:null,propName:e,needsPropagation:!0});let k=d;'function'==typeof a.toAttr&&(k=a.toAttr);let l=d;'function'==typeof a.fromAttr&&(l=a.fromAttr);let m=d;'function'==typeof a.get&&(m=a.get);let n=c;'function'==typeof a.set&&(n=a.set);let o=d;'function'==typeof a.coerce&&(o=a.coerce),g[e]={val:f,attr:j,toAttr:k,fromAttr:l,get:m,set:n,coerce:o,hasSet:!1}}const i=Object.keys(h),j=class extends HTMLElement{constructor(){super(),f=f.bind(this);for(const a of Object.keys(g)){const b=g[a],c='string'==typeof b.attr,d=b.attr,e=h[d];b.toAttr=b.toAttr.bind(this),b.fromAttr=b.fromAttr.bind(this),b.get=b.get.bind(this),b.set=b.set.bind(this),b.coerce=b.coerce.bind(this),Object.defineProperty(this,a,{set(a){let f=a;b.settingInitialValue?b.settingInitialValue=!1:f=b.coerce(a),b.val=f,b.set(f);const g=!b.hasSet&&this.hasAttribute(d);if(c&&!g){const a=b.toAttr(f);e.needsPropagation=!1,this.setAttribute(d,a)}b.hasSet=!0},get(){const a=b.get(b.val);return a}})}const b='string'==typeof a.template,c='string'==typeof a.templateUrl;if(a.shadowDom&&this.attachShadow({mode:'open'}),b?a.shadowDom?this.shadowRoot.innerHTML=a.template:this.innerHTML=a.template:c&&fetch(a.templateUrl).then((b)=>{if(b.ok)return b.text();throw new Error(`Couldn't fetch template at ${a.templateUrl}. `+`Got HTTP status code ${status}`)}).then((b)=>{a.shadowDom?this.shadowRoot.innerHTML=b:this.innerHTML=b}),!1!==a.cacheIds){console.log('caching ids'),this.$={};let b;b=a.shadowDom?this.shadowRoot.querySelectorAll('[id]'):this.querySelectorAll('[id]'),console.log(b);for(const a of b){const b=a;console.log('castEl',b),this.$[b.id]=b}}}connectedCallback(){if(!e){for(const a of Object.keys(b)){const b=g[a];void 0===b.val||null===b.val||b.hasSet||(b.settingInitialValue=!0,this[a]=b.val)}f.call(this),e=!0}}attributeChangedCallback(a,b,c){if(c!==b){const b=h[a];if(b.val=c,b.needsPropagation){console.log('setting prop'),b.needsPropagation=!1;const a=b.propName,d=g[a],e=d.fromAttr(c);this[a]=e}}}static get observedAttributes(){return i}};for(const b of Object.keys(a.methods)){const c=a.methods[b];if('function'!=typeof c)throw new TypeError(`${b} must be a function (got ${c})`);j.prototype[b]=c}return j}}])});
+
+/***/ }),
+/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__build_make_element_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__build_make_element_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__build_make_element_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__build_make_element_js__);
 
 
 
-const CounterElement = __WEBPACK_IMPORTED_MODULE_0__build_make_element_js___default.a({
+const CounterElement = __WEBPACK_IMPORTED_MODULE_0__build_make_element_js___default()({
 	props: {
 		counter: {
-			init: 1,
+			init: 10,
+			attr: 'lol',
+			coerce(val) {
+				console.log('coerce');
+				debugger;
+
+				return val + '99';
+			},
+			toAttr(val) {
+				return val + '23';
+			},
+			fromAttr(val) {
+				return val + 'FROM ATTR';
+			},
 			set(counter) {
 				console.log('counter: setting counter text content');
 				this.$['counter'].textContent = counter;
@@ -106,12 +128,6 @@ const CounterElement = __WEBPACK_IMPORTED_MODULE_0__build_make_element_js___defa
 
 customElements.define('counter-element', CounterElement);
 
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-(function(a,b){ true?module.exports=b():'function'==typeof define&&define.amd?define([],b):'object'==typeof exports?exports.makeElement=b():a.makeElement=b()})(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a['default']}:function(){return a};return b.d(c,'a',c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p='',b(b.s=0)}([function(a){function b(){}function c(a){return a}a.exports=function(a={}){const d=a.props;let e=!1,f=b;'function'==typeof a.ready&&(f=a.ready);const g={},h={};for(const e of Object.keys(d)){const a=d[e];let f=null;a.init!==void 0&&(f=a.init);let i='string'==typeof a.attr,j=null;i&&(j=a.attr,h[j]={val:null,prop:e,needsPropagation:!0});let k=c;'function'==typeof a.toAttr&&(k=a.toAttr);let l=c;'function'==typeof a.fromAttr&&(l=a.fromAttr);let m=c;'function'==typeof a.get&&(m=a.get);let n=b;'function'==typeof a.set&&(n=a.set);let o=c;'function'==typeof a.coerce&&(o=a.coerce),g[e]={val:f,attr:j,toAttr:k,fromAttr:l,get:m,set:n,coerce:o,hasSet:!1}}const i=Object.keys(h),j=class extends HTMLElement{constructor(){super(),f=f.bind(this);for(const a of Object.keys(g)){const b=g[a],c='string'==typeof b.attr,d=b.attr,e=h[d];b.toAttr=b.toAttr.bind(this),b.fromAttr=b.fromAttr.bind(this),b.get=b.get.bind(this),b.set=b.set.bind(this),b.coerce=b.coerce.bind(this),Object.defineProperty(this,a,{set(a){let f=a;b.settingInitialValue?b.settingInitialValue=!1:f=b.coerce(a),b.val=f,b.set(f);const g=!b.hasSet&&this.hasAttribute(d);if(c&&!g){const a=b.toAttr(f);e.needsPropagation=!1,this.setAttribute(d,a)}b.hasSet=!0},get(){const a=b.get(b.val);return a}})}const b='string'==typeof a.template,c='string'==typeof a.templateUrl;if(a.shadowDom&&this.attachShadow({mode:'open'}),b?a.shadowDom?this.shadowRoot.innerHTML=a.template:this.innerHTML=a.template:c&&fetch(a.templateUrl).then((a)=>{if(a.ok)return a.text();throw new Error(`Couldn't fetch template at ${templateUrl}. `+`Got HTTP status code ${status}`)}).then((b)=>{a.shadowDom?this.shadowRoot.innerHTML=b:this.innerHTML=b}),!1!==a.cacheIds){this.$={};let b=this;a.shadowDom&&(b=this.shadowRoot);const c=b.querySelectorAll('[id]');for(const a of c)this.$[a.id]=a}}connectedCallback(){if(!e){for(const a of Object.keys(d)){const b=g[a];void 0===b.val||null===b.val||b.hasSet||(b.settingInitialValue=!0,this[a]=b.val)}f.call(this),e=!0}}attributeChangedCallback(a,b,c){if(c!==b){const b=h[a];if(b.val=c,b.needsPropagation){b.needsPropagation=!1;const a=b.prop,d=g[a],e=d.fromAttr(c);this[a]=e}}}static get observedAttributes(){return i}};for(const b of Object.keys(a.methods)){const c=a.methods[b];if('function'!=typeof c)throw new TypeError(`${b} must be a function (got ${c})`);j.prototype[b]=c}return j}}])});
 
 /***/ })
 /******/ ]);
