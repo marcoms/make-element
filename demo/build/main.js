@@ -258,26 +258,16 @@ function makeElement(def = {}) {
                 Object.defineProperty(this, propName, {
                     set(val) {
                         let propVal = val;
-                        // we don't coerce the user-defined initial value from the attribute
-                        if (!internalProp.settingInitialValue) {
-                            propVal = internalProp.coerce(val);
-                        }
-                        else {
+                        propVal = internalProp.coerce(propVal);
+                        if (internalProp.settingInitialValue) {
                             internalProp.settingInitialValue = false;
                         }
                         internalProp.val = propVal;
                         internalProp.set(propVal);
                         /*
                         We only propagate from the property to the attribute if:
-                            - There is an attribute to propagate to
-                            - It is not the case where the property has not
-                            propagated and yet the attribute exists
-
-                        In the latter case the attribute has already been
-                        defined in the markup, so there is no need to propagate
-                        the property's value. Instead, the attribute value
-                        should propagate to the property in
-                        attributeChangedCallback.
+                            - A linked attribute was defined
+                            - The property setter is not being triggered by attributeChangedCallback
                         */
                         const beingInitialized = (this.hasAttribute(attrName)
                             && !internalProp.hasSet);
@@ -331,7 +321,7 @@ function makeElement(def = {}) {
                     }
                 });
             }
-            if (def.cacheIds !== false) {
+            if (def.cacheIds) {
                 this.$ = {};
                 let elsWithIds;
                 if (def.shadowDom) {
@@ -353,6 +343,7 @@ function makeElement(def = {}) {
             // only run once
             for (const propName of Object.keys(props)) {
                 const internalProp = registeredProps[propName];
+                // if there is a value but the setter has not run
                 if (internalProp.val !== undefined
                     && internalProp.val !== null
                     && !internalProp.hasSet) {
