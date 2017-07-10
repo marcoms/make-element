@@ -289,7 +289,8 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 				});
 			}
 
-			if (def.cacheIds) {
+			// id caching enabled by default
+			if (def.cacheIds !== false) {
 				this.$ = {};
 
 				let elsWithIds: NodeList;

@@ -249,7 +249,8 @@ function makeElement(def = {}) {
                     }
                 });
             }
-            if (def.cacheIds) {
+            // id caching enabled by default
+            if (def.cacheIds !== false) {
                 this.$ = {};
                 let elsWithIds;
                 if (def.shadowDom) {
