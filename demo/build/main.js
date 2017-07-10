@@ -70,7 +70,337 @@
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-(function(a,b){ true?module.exports=b():'function'==typeof define&&define.amd?define([],b):'object'==typeof exports?exports.makeElement=b():a.makeElement=b()})(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.i=function(a){return a},b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a['default']}:function(){return a};return b.d(c,'a',c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p='',b(b.s=0)}([function(a,b){'use strict';function c(){}function d(){}function e(a){return a}Object.defineProperty(b,'__esModule',{value:!0}),b['default']=function(a={}){const b=a.props;let f=!1,g=c;'function'==typeof a.ready&&(g=a.ready);const h={},i={};for(const c of Object.keys(b)){const a=b[c];let f=null;a.init!==void 0&&(f=a.init);let g='string'==typeof a.attr,j=null;g&&(j=a.attr,i[j]={val:null,propName:c,needsPropagation:!0});let k=e;'function'==typeof a.toAttr&&(k=a.toAttr);let l=e;'function'==typeof a.fromAttr&&(l=a.fromAttr);let m=e;'function'==typeof a.get&&(m=a.get);let n=d;'function'==typeof a.set&&(n=a.set);let o=e;'function'==typeof a.coerce&&(o=a.coerce),h[c]={val:f,attr:j,toAttr:k,fromAttr:l,get:m,set:n,coerce:o,hasSet:!1}}const j=Object.keys(i),k=class extends HTMLElement{constructor(){super(),g=g.bind(this);for(const a of Object.keys(h)){const b=h[a],c='string'==typeof b.attr,d=b.attr,e=i[d];b.toAttr=b.toAttr.bind(this),b.fromAttr=b.fromAttr.bind(this),b.get=b.get.bind(this),b.set=b.set.bind(this),b.coerce=b.coerce.bind(this),Object.defineProperty(this,a,{set(a){let f=a;b.settingInitialValue?b.settingInitialValue=!1:f=b.coerce(a),b.val=f,b.set(f);const g=!b.hasSet&&this.hasAttribute(d);if(c&&!g){const a=b.toAttr(f);e.needsPropagation=!1,this.setAttribute(d,a)}b.hasSet=!0},get(){const a=b.get(b.val);return a}})}const b='string'==typeof a.template,c='string'==typeof a.templateUrl;if(a.shadowDom&&this.attachShadow({mode:'open'}),b?a.shadowDom?this.shadowRoot.innerHTML=a.template:this.innerHTML=a.template:c&&fetch(a.templateUrl).then((b)=>{if(b.ok)return b.text();throw new Error(`Couldn't fetch template at ${a.templateUrl}. `+`Got HTTP status code ${status}`)}).then((b)=>{a.shadowDom?this.shadowRoot.innerHTML=b:this.innerHTML=b}),!1!==a.cacheIds){console.log('caching ids'),this.$={};let b;b=a.shadowDom?this.shadowRoot.querySelectorAll('[id]'):this.querySelectorAll('[id]'),console.log(b);for(const a of b){const b=a;console.log('castEl',b),this.$[b.id]=b}}}connectedCallback(){if(!f){for(const a of Object.keys(b)){const b=h[a];void 0===b.val||null===b.val||b.hasSet||(b.settingInitialValue=!0,this[a]=b.val)}g.call(this),f=!0}}attributeChangedCallback(a,b,c){if(c!==b){const b=i[a];if(b.val=c,b.needsPropagation){console.log('setting prop'),b.needsPropagation=!1;const a=b.propName,d=h[a],e=d.fromAttr(c);this[a]=e}}}static get observedAttributes(){return j}};for(const b of Object.keys(a.methods)){const c=a.methods[b];if('function'!=typeof c)throw new TypeError(`${b} must be a function (got ${c})`);k.prototype[b]=c}return k}}])});
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(true)
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["makeElement"] = factory();
+	else
+		root["makeElement"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+// utility functions
+function noop() { }
+function consume(val) { }
+function identity(val) {
+    // nothing special here
+    return val;
+}
+function makeElement(def = {}) {
+    const props = def.props;
+    // whether the connectedCallback has been run
+    let hasConnected = false;
+    let readyFn = noop;
+    if (typeof def.ready === 'function') {
+        readyFn = def.ready;
+    }
+    // used to keep track of registered properties/attributes
+    const registeredProps = {};
+    const registeredAttrs = {};
+    // we need to access the property name through Object.keys
+    for (const propName of Object.keys(props)) {
+        // populated registeredProps/Attrs objects
+        const propDef = props[propName];
+        let val = null;
+        if (propDef.init !== undefined) {
+            // initial value for the property
+            val = propDef.init;
+        }
+        let hasAttr = typeof propDef.attr === 'string';
+        let attrName = null;
+        if (hasAttr) {
+            attrName = propDef.attr;
+            // register attribute internally
+            registeredAttrs[attrName] = {
+                // internal value
+                val: null,
+                // linked property name
+                propName,
+                // whether the attribute needs to be propagated to the
+                // property
+                needsPropagation: true,
+            };
+        }
+        let toAttr = identity;
+        if (typeof propDef.toAttr === 'function') {
+            // this === element instance
+            toAttr = propDef.toAttr;
+        }
+        let fromAttr = identity;
+        if (typeof propDef.fromAttr === 'function') {
+            fromAttr = propDef.fromAttr;
+        }
+        let get = identity;
+        if (typeof propDef.get === 'function') {
+            get = propDef.get;
+        }
+        let set = consume;
+        if (typeof propDef.set === 'function') {
+            set = propDef.set;
+        }
+        let coerce = identity;
+        if (typeof propDef.coerce === 'function') {
+            coerce = propDef.coerce;
+        }
+        registeredProps[propName] = {
+            // internal value
+            val,
+            // linked attribute name
+            attr: attrName,
+            // function used to produce an attribute value from a
+            // property value
+            toAttr,
+            // function used to produce a property value from an
+            // attribute value
+            fromAttr,
+            // getter function
+            get,
+            // setter function
+            set,
+            // function to modify the value passed to the setter function
+            coerce,
+            // if the property has been set before
+            hasSet: false,
+        };
+    }
+    const observedAttrs = Object.keys(registeredAttrs);
+    const DefinableCustomElement = class extends HTMLElement {
+        constructor() {
+            super();
+            readyFn = readyFn.bind(this);
+            for (const propName of Object.keys(registeredProps)) {
+                // convenience aliases
+                const internalProp = registeredProps[propName];
+                const hasLinkedAttr = typeof internalProp.attr === 'string';
+                const attrName = internalProp.attr;
+                const internalAttr = registeredAttrs[attrName];
+                // bind property methods to element context
+                internalProp.toAttr = internalProp.toAttr.bind(this);
+                internalProp.fromAttr = internalProp.fromAttr.bind(this);
+                internalProp.get = internalProp.get.bind(this);
+                internalProp.set = internalProp.set.bind(this);
+                internalProp.coerce = internalProp.coerce.bind(this);
+                Object.defineProperty(this, propName, {
+                    set(val) {
+                        let propVal = val;
+                        // we don't coerce the user-defined initial value from the attribute
+                        if (!internalProp.settingInitialValue) {
+                            propVal = internalProp.coerce(val);
+                        }
+                        else {
+                            internalProp.settingInitialValue = false;
+                        }
+                        internalProp.val = propVal;
+                        internalProp.set(propVal);
+                        /*
+                        We only propagate from the property to the attribute if:
+                            - There is an attribute to propagate to
+                            - It is not the case where the property has not
+                            propagated and yet the attribute exists
+
+                        In the latter case the attribute has already been
+                        defined in the markup, so there is no need to propagate
+                        the property's value. Instead, the attribute value
+                        should propagate to the property in
+                        attributeChangedCallback.
+                        */
+                        const beingInitialized = (this.hasAttribute(attrName)
+                            && !internalProp.hasSet);
+                        if (hasLinkedAttr && !beingInitialized) {
+                            const attrVal = internalProp.toAttr(propVal);
+                            // prevent the attribute from reflowing back to the
+                            // property in attributeChangedCallback
+                            internalAttr.needsPropagation = false;
+                            // invoke attributeChangedCallback
+                            this.setAttribute(attrName, attrVal);
+                        }
+                        internalProp.hasSet = true;
+                    },
+                    get() {
+                        const propVal = internalProp.get(internalProp.val);
+                        return propVal;
+                    },
+                });
+            }
+            // insert element template
+            const hasLocalTemplate = typeof def.template === 'string';
+            const hasRemoteTemplate = typeof def.templateUrl === 'string';
+            if (def.shadowDom) {
+                this.attachShadow({ mode: 'open' });
+            }
+            if (hasLocalTemplate) {
+                if (def.shadowDom) {
+                    this.shadowRoot.innerHTML = def.template;
+                }
+                else {
+                    this.innerHTML = def.template;
+                }
+            }
+            else if (hasRemoteTemplate) {
+                fetch(def.templateUrl).then((resp) => {
+                    if (resp.ok) {
+                        // 200 OK
+                        return resp.text();
+                    }
+                    else {
+                        // 404 et al
+                        throw new Error(`Couldn't fetch template at ${def.templateUrl}. ` +
+                            `Got HTTP status code ${status}`);
+                    }
+                }).then((template) => {
+                    if (def.shadowDom) {
+                        this.shadowRoot.innerHTML = template;
+                    }
+                    else {
+                        this.innerHTML = template;
+                    }
+                });
+            }
+            if (def.cacheIds !== false) {
+                this.$ = {};
+                let elsWithIds;
+                if (def.shadowDom) {
+                    elsWithIds = this.shadowRoot.querySelectorAll('[id]');
+                }
+                else {
+                    elsWithIds = this.querySelectorAll('[id]');
+                }
+                for (const el of elsWithIds) {
+                    const castEl = el;
+                    this.$[castEl.id] = castEl;
+                }
+            }
+        }
+        connectedCallback() {
+            if (hasConnected) {
+                return;
+            }
+            // only run once
+            for (const propName of Object.keys(props)) {
+                const internalProp = registeredProps[propName];
+                if (internalProp.val !== undefined
+                    && internalProp.val !== null
+                    && !internalProp.hasSet) {
+                    internalProp.settingInitialValue = true;
+                    // kick off property setter
+                    this[propName] = internalProp.val;
+                }
+            }
+            // invoke ready function with element context
+            readyFn.call(this);
+            hasConnected = true;
+        }
+        attributeChangedCallback(attrName, oldVal, val) {
+            // only do work if the new value differs
+            if (val !== oldVal) {
+                // convenience aliases
+                const internalAttr = registeredAttrs[attrName];
+                internalAttr.val = val;
+                if (internalAttr.needsPropagation) {
+                    // propagation should only occur once
+                    internalAttr.needsPropagation = false;
+                    const propName = internalAttr.propName;
+                    const internalProp = registeredProps[propName];
+                    const propVal = internalProp.fromAttr(val);
+                    this[propName] = propVal;
+                }
+            }
+        }
+        static get observedAttributes() {
+            // required for attributeChangedCallback to be called
+            return observedAttrs;
+        }
+    };
+    for (const fnName of Object.keys(def.methods)) {
+        const fn = def.methods[fnName];
+        if (typeof fn !== 'function') {
+            throw new TypeError(`${fnName} must be a function (got ${fn})`);
+        }
+        DefinableCustomElement.prototype[fnName] = fn;
+    }
+    return DefinableCustomElement;
+}
+/* harmony default export */ __webpack_exports__["default"] = (makeElement);
+
+
+/***/ })
+/******/ ]);
+});
 
 /***/ }),
 /* 1 */

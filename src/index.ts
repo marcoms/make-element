@@ -197,7 +197,7 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 			for (const propName of Object.keys(registeredProps)) {
 				// convenience aliases
 				const internalProp = registeredProps[propName] as InternalProp;
-				const hasAttr = typeof internalProp.attr === 'string';
+				const hasLinkedAttr = typeof internalProp.attr === 'string';
 				const attrName = internalProp.attr;
 				const internalAttr = registeredAttrs[attrName] as InternalAttr;
 
@@ -212,7 +212,7 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 					set(val) {
 						let propVal = val;
 
-						// we don't coerce the user-defined initial value
+						// we don't coerce the user-defined initial value from the attribute
 
 						if (!internalProp.settingInitialValue) {
 							propVal = internalProp.coerce(val);
@@ -224,7 +224,6 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 						internalProp.set(propVal);
 
 						/*
-
 						We only propagate from the property to the attribute if:
 							- There is an attribute to propagate to
 							- It is not the case where the property has not
@@ -235,15 +234,14 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 						the property's value. Instead, the attribute value
 						should propagate to the property in
 						attributeChangedCallback.
-
 						*/
 
-						const initializedFromAttribute = (
-							!internalProp.hasSet
-							&& this.hasAttribute(attrName)
+						const beingInitialized = (
+							this.hasAttribute(attrName)
+							&& !internalProp.hasSet
 						);
 
-						if (hasAttr && !initializedFromAttribute) {
+						if (hasLinkedAttr && !beingInitialized) {
 							const attrVal = internalProp.toAttr(propVal);
 
 							// prevent the attribute from reflowing back to the
@@ -301,7 +299,6 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 			}
 
 			if (def.cacheIds !== false) {
-				console.log('caching ids');
 				this.$ = {};
 
 				let elsWithIds: NodeList;
@@ -311,12 +308,8 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 					elsWithIds = this.querySelectorAll('[id]');
 				}
 
-				console.log(elsWithIds);
-
 				for (const el of elsWithIds) {
 					const castEl = el as HTMLElement;
-
-					console.log('castEl', castEl);
 
 					this.$[castEl.id] = castEl;
 				}
@@ -359,8 +352,6 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 				internalAttr.val = val;
 
 				if (internalAttr.needsPropagation) {
-					console.log('setting prop');
-
 					// propagation should only occur once
 					internalAttr.needsPropagation = false;
 
