@@ -70,7 +70,7 @@ interface RegisteredAttrs {
 	[index: string]: RegisteredAttr;
 }
 
-interface InternalAttr extends RegisteredAttr {}
+type InternalAttr = RegisteredAttr;
 
 // utility functions
 
