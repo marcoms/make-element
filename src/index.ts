@@ -14,6 +14,7 @@ export interface PropDefs {
 
 export interface PropDef {
 	attr?: string;
+	boolAttr?: boolean;
 	set?: SetFn;
 	get?: GetFn;
 	toAttr?: ToAttrFn;
@@ -48,6 +49,13 @@ export interface CustomElement extends HTMLElement {
 // private interfaces
 
 interface RegisteredProp extends PropDef {
+	boolAttr: boolean;
+	set: SetFn;
+	get: GetFn;
+	toAttr: ToAttrFn;
+	fromAttr: FromAttrFn;
+	coerce: CoerceFn;
+
 	val: any;
 	hasSet: boolean;
 }
@@ -79,6 +87,14 @@ function consume(val: any) {}
 function identity(val: any) {
 	// nothing special here
 	return val;
+}
+
+function convertToBoolAttr(val) {
+	if (Boolean(val)) {
+		return '';
+	} else {
+		return undefined;
+	}
 }
 
 function makeElement(def: ElementDef = {}): CustomElementClass {
@@ -130,9 +146,15 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 			};
 		}
 
+		let boolAttr = false;
+		if (typeof propDef.boolAttr === 'boolean') {
+			boolAttr = propDef.boolAttr;
+		}
+
 		let toAttr = identity;
-		if (typeof propDef.toAttr === 'function') {
-			// this === element instance
+		if (boolAttr) {
+			toAttr = convertToBoolAttr;
+		} else if (typeof propDef.toAttr === 'function') {
 			toAttr = propDef.toAttr;
 		}
 
@@ -162,6 +184,8 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 
 			// linked attribute name
 			attr: attrName,
+
+			boolAttr,
 
 			// function used to produce an attribute value from a
 			// property value
@@ -240,8 +264,12 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 							// property in attributeChangedCallback
 							internalAttr.needsPropagation = false;
 
-							// invoke attributeChangedCallback
-							this.setAttribute(attrName, attrVal);
+							if (attrVal !== undefined) {
+								// invoke attributeChangedCallback
+								this.setAttribute(attrName, attrVal);
+							} else {
+								this.removeAttribute(attrName);
+							}
 						}
 
 						internalProp.hasSet = true;

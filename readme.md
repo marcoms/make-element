@@ -96,6 +96,12 @@ myElement.setAttribute('my-attr', 48);
 myElement.myProp;  // -> 32 (no change)
 ```
 
+##### `boolAttr`
+
+Whether the attribute is a boolean attribute
+
+Boolean attributes automatically have defined a `toAttr` function that returns `''` (making the attribute true) on a truthy value and `undefined` (removing the attribute) on a falsy value.
+
 ##### `get(val)`
 
 Getter function called when the property is accessed
@@ -136,6 +142,8 @@ coerce(val) {
 ##### `toAttr(val)`
 
 Function used to modify the property value when storing into an attribute
+
+Return values of `undefined` will remove the attribute
 
 ##### `fromAttr(val)`
 
