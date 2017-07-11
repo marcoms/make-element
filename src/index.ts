@@ -82,7 +82,8 @@ function identity(val: any) {
 }
 
 function makeElement(def: ElementDef = {}): CustomElementClass {
-	const props = def.props;
+	const props: PropDefs = def.props || {};
+	const methods: MethodsDef = def.methods || {};
 
 	// whether the connectedCallback has been run
 	let hasConnected = false;
@@ -363,8 +364,8 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 		}
 	};
 
-	for (const fnName of Object.keys(def.methods)) {
-		const fn = def.methods[fnName];
+	for (const fnName of Object.keys(methods)) {
+		const fn = methods[fnName];
 
 		if (typeof fn !== 'function') {
 			throw new TypeError(

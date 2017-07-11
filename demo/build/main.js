@@ -162,7 +162,8 @@ function identity(val) {
     return val;
 }
 function makeElement(def = {}) {
-    const props = def.props;
+    const props = def.props || {};
+    const methods = def.methods || {};
     // whether the connectedCallback has been run
     let hasConnected = false;
     let readyFn = noop;
@@ -378,8 +379,8 @@ function makeElement(def = {}) {
             return observedAttrs;
         }
     };
-    for (const fnName of Object.keys(def.methods)) {
-        const fn = def.methods[fnName];
+    for (const fnName of Object.keys(methods)) {
+        const fn = methods[fnName];
         if (typeof fn !== 'function') {
             throw new TypeError(`${fnName} must be a function (got ${fn})`);
         }
