@@ -89,6 +89,14 @@ function identity(val) {
     // nothing special here
     return val;
 }
+function convertToBoolAttr(val) {
+    if (Boolean(val)) {
+        return '';
+    }
+    else {
+        return undefined;
+    }
+}
 function makeElement(def = {}) {
     const props = def.props || {};
     const methods = def.methods || {};
@@ -125,9 +133,15 @@ function makeElement(def = {}) {
                 needsPropagation: true,
             };
         }
+        let boolAttr = false;
+        if (typeof propDef.boolAttr === 'boolean') {
+            boolAttr = propDef.boolAttr;
+        }
         let toAttr = identity;
-        if (typeof propDef.toAttr === 'function') {
-            // this === element instance
+        if (boolAttr) {
+            toAttr = convertToBoolAttr;
+        }
+        else if (typeof propDef.toAttr === 'function') {
             toAttr = propDef.toAttr;
         }
         let fromAttr = identity;
@@ -151,6 +165,7 @@ function makeElement(def = {}) {
             val,
             // linked attribute name
             attr: attrName,
+            boolAttr,
             // function used to produce an attribute value from a
             // property value
             toAttr,
@@ -205,8 +220,13 @@ function makeElement(def = {}) {
                             // prevent the attribute from reflowing back to the
                             // property in attributeChangedCallback
                             internalAttr.needsPropagation = false;
-                            // invoke attributeChangedCallback
-                            this.setAttribute(attrName, attrVal);
+                            if (attrVal !== undefined) {
+                                // invoke attributeChangedCallback
+                                this.setAttribute(attrName, attrVal);
+                            }
+                            else {
+                                this.removeAttribute(attrName);
+                            }
                         }
                         internalProp.hasSet = true;
                     },
