@@ -46,10 +46,6 @@ export interface CustomElementClass extends Function {
 
 export interface CustomElement extends HTMLElement {
 	$: IdMap;
-	_hasConnected: boolean;
-	_readyFn: ReadyFn;
-	_props: RegisteredProps;
-	_attrs: RegisteredAttrs;
 }
 
 // private interfaces
@@ -215,10 +211,11 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 
 	const DefinableCustomElement: CustomElementClass = class extends HTMLElement {
 		$: IdMap;
-		_hasConnected = false;
-		_readyFn = readyFn;
-		_props = registeredProps;
-		_attrs = registeredAttrs;
+
+		private _hasConnected: boolean = false;
+		private _readyFn: ReadyFn = readyFn;
+		private _props: RegisteredProps = registeredProps;
+		private _attrs: RegisteredAttrs = registeredAttrs;
 
 		constructor() {
 			super();
