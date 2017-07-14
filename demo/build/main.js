@@ -158,14 +158,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 function noop() { }
 function consume(val) { }
 function identity(val) {
-    // nothing special here
     return val;
+}
+function convertToBoolAttr(val) {
+    if (Boolean(val)) {
+        return '';
+    }
+    else {
+        return undefined;
+    }
 }
 function makeElement(def = {}) {
     const props = def.props || {};
     const methods = def.methods || {};
-    // whether the connectedCallback has been run
-    let hasConnected = false;
     let readyFn = noop;
     if (typeof def.ready === 'function') {
         readyFn = def.ready;
@@ -197,9 +202,15 @@ function makeElement(def = {}) {
                 needsPropagation: true,
             };
         }
+        let boolAttr = false;
+        if (typeof propDef.boolAttr === 'boolean') {
+            boolAttr = propDef.boolAttr;
+        }
         let toAttr = identity;
-        if (typeof propDef.toAttr === 'function') {
-            // this === element instance
+        if (boolAttr) {
+            toAttr = convertToBoolAttr;
+        }
+        else if (typeof propDef.toAttr === 'function') {
             toAttr = propDef.toAttr;
         }
         let fromAttr = identity;
@@ -223,6 +234,7 @@ function makeElement(def = {}) {
             val,
             // linked attribute name
             attr: attrName,
+            boolAttr,
             // function used to produce an attribute value from a
             // property value
             toAttr,
@@ -243,13 +255,16 @@ function makeElement(def = {}) {
     const DefinableCustomElement = class extends HTMLElement {
         constructor() {
             super();
-            readyFn = readyFn.bind(this);
-            for (const propName of Object.keys(registeredProps)) {
+            this._hasConnected = false;
+            this._readyFn = readyFn;
+            this._props = registeredProps;
+            this._attrs = registeredAttrs;
+            for (const propName of Object.keys(this._props)) {
                 // convenience aliases
-                const internalProp = registeredProps[propName];
+                const internalProp = this._props[propName];
                 const hasLinkedAttr = typeof internalProp.attr === 'string';
                 const attrName = internalProp.attr;
-                const internalAttr = registeredAttrs[attrName];
+                const internalAttr = this._attrs[attrName];
                 // bind property methods to element context
                 internalProp.toAttr = internalProp.toAttr.bind(this);
                 internalProp.fromAttr = internalProp.fromAttr.bind(this);
@@ -277,8 +292,13 @@ function makeElement(def = {}) {
                             // prevent the attribute from reflowing back to the
                             // property in attributeChangedCallback
                             internalAttr.needsPropagation = false;
-                            // invoke attributeChangedCallback
-                            this.setAttribute(attrName, attrVal);
+                            if (attrVal !== undefined) {
+                                // invoke attributeChangedCallback
+                                this.setAttribute(attrName, attrVal);
+                            }
+                            else {
+                                this.removeAttribute(attrName);
+                            }
                         }
                         internalProp.hasSet = true;
                     },
@@ -339,12 +359,12 @@ function makeElement(def = {}) {
             }
         }
         connectedCallback() {
-            if (hasConnected) {
+            if (this._hasConnected) {
                 return;
             }
             // only run once
-            for (const propName of Object.keys(props)) {
-                const internalProp = registeredProps[propName];
+            for (const propName of Object.keys(this._props)) {
+                const internalProp = this._props[propName];
                 // if there is a value but the setter has not run
                 if (internalProp.val !== undefined
                     && internalProp.val !== null
@@ -354,21 +374,20 @@ function makeElement(def = {}) {
                     this[propName] = internalProp.val;
                 }
             }
-            // invoke ready function with element context
-            readyFn.call(this);
-            hasConnected = true;
+            this._readyFn();
+            this._hasConnected = true;
         }
         attributeChangedCallback(attrName, oldVal, val) {
             // only do work if the new value differs
             if (val !== oldVal) {
                 // convenience aliases
-                const internalAttr = registeredAttrs[attrName];
+                const internalAttr = this._attrs[attrName];
                 internalAttr.val = val;
                 if (internalAttr.needsPropagation) {
                     // propagation should only occur once
                     internalAttr.needsPropagation = false;
                     const propName = internalAttr.propName;
-                    const internalProp = registeredProps[propName];
+                    const internalProp = this._props[propName];
                     const propVal = internalProp.fromAttr(val);
                     this[propName] = propVal;
                 }

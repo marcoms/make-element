@@ -1,3 +1,12 @@
+export interface ArbitraryFn { (...args: any[]): any; }
+export interface GetFn { (val: any): void; }
+export interface SetFn { (val: any): any; }
+export interface CoerceFn { (val: any): any; }
+export interface FromAttrFn { (val: string): any; }
+export interface ToAttrFn { (val: any): string; }
+
+type ReadyFn = ArbitraryFn;
+
 export interface ElementDef {
 	props?: PropDefs;
 	shadowDom?: boolean;
@@ -5,7 +14,7 @@ export interface ElementDef {
 	templateUrl?: string;
 	cacheIds?: boolean;
 	methods?: MethodsDef;
-	ready?: ArbitraryFn;
+	ready?: ReadyFn;
 }
 
 export interface PropDefs {
@@ -22,13 +31,6 @@ export interface PropDef {
 	coerce?: CoerceFn;
 	init?: any;
 }
-
-export interface ArbitraryFn { (...args: any[]): any; }
-export interface GetFn { (val: any): void; }
-export interface SetFn { (val: any): any; }
-export interface CoerceFn { (val: any): any; }
-export interface FromAttrFn { (val: string): any; }
-export interface ToAttrFn { (val: any): string; }
 
 export interface MethodsDef {
 	[index: string]: ArbitraryFn;
@@ -88,12 +90,11 @@ type InternalAttr = RegisteredAttr;
 
 function noop() {}
 function consume(val: any) {}
-function identity(val: any) {
-	// nothing special here
+function identity<T>(val: T): T {
 	return val;
 }
 
-function convertToBoolAttr(val) {
+function convertToBoolAttr(val: any): string | undefined {
 	if (Boolean(val)) {
 		return '';
 	} else {
@@ -152,29 +153,29 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 			boolAttr = propDef.boolAttr;
 		}
 
-		let toAttr = identity;
+		let toAttr: ToAttrFn = identity;
 		if (boolAttr) {
 			toAttr = convertToBoolAttr;
 		} else if (typeof propDef.toAttr === 'function') {
 			toAttr = propDef.toAttr;
 		}
 
-		let fromAttr = identity;
+		let fromAttr: FromAttrFn = identity;
 		if (typeof propDef.fromAttr === 'function') {
 			fromAttr = propDef.fromAttr;
 		}
 
-		let get = identity;
+		let get: GetFn = identity;
 		if (typeof propDef.get === 'function') {
 			get = propDef.get;
 		}
 
-		let set = consume;
+		let set: SetFn = consume;
 		if (typeof propDef.set === 'function') {
 			set = propDef.set;
 		}
 
-		let coerce = identity;
+		let coerce: CoerceFn = identity;
 		if (typeof propDef.coerce === 'function') {
 			coerce = propDef.coerce;
 		}
