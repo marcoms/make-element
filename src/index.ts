@@ -44,6 +44,10 @@ export interface CustomElementClass extends Function {
 
 export interface CustomElement extends HTMLElement {
 	$: IdMap;
+	_hasConnected: boolean;
+	_readyFn: ReadyFn;
+	_props: RegisteredProps;
+	_attrs: RegisteredAttrs;
 }
 
 // private interfaces
@@ -213,18 +217,20 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 
 	const DefinableCustomElement: CustomElementClass = class extends HTMLElement {
 		$: IdMap;
+		_hasConnected = false;
+		_readyFn = readyFn;
+		_props = registeredProps;
+		_attrs = registeredAttrs;
 
 		constructor() {
 			super();
 
-			readyFn = readyFn.bind(this);
-
-			for (const propName of Object.keys(registeredProps)) {
+			for (const propName of Object.keys(this._props)) {
 				// convenience aliases
-				const internalProp = registeredProps[propName] as InternalProp;
+				const internalProp = this._props[propName] as InternalProp;
 				const hasLinkedAttr = typeof internalProp.attr === 'string';
 				const attrName = internalProp.attr;
-				const internalAttr = registeredAttrs[attrName] as InternalAttr;
+				const internalAttr = this._attrs[attrName] as InternalAttr;
 
 				// bind property methods to element context
 				internalProp.toAttr = internalProp.toAttr.bind(this);
@@ -337,14 +343,14 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 		}
 
 		connectedCallback() {
-			if (hasConnected) {
+			if (this._hasConnected) {
 				return;
 			}
 
 			// only run once
 
-			for (const propName of Object.keys(props)) {
-				const internalProp = registeredProps[propName] as InternalProp;
+			for (const propName of Object.keys(this._props)) {
+				const internalProp = this._props[propName] as InternalProp;
 
 				// if there is a value but the setter has not run
 
@@ -360,17 +366,15 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 				}
 			}
 
-			// invoke ready function with element context
-			readyFn.call(this);
-
-			hasConnected = true;
+			this._readyFn();
+			this._hasConnected = true;
 		}
 
 		attributeChangedCallback(attrName, oldVal, val) {
 			// only do work if the new value differs
 			if (val !== oldVal) {
 				// convenience aliases
-				const internalAttr = registeredAttrs[attrName] as InternalAttr;
+				const internalAttr = this._attrs[attrName] as InternalAttr;
 				internalAttr.val = val;
 
 				if (internalAttr.needsPropagation) {
@@ -378,7 +382,7 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 					internalAttr.needsPropagation = false;
 
 					const propName = internalAttr.propName;
-					const internalProp = registeredProps[propName] as InternalProp;
+					const internalProp = this._props[propName] as InternalProp;
 
 					const propVal = internalProp.fromAttr(val);
 					this[propName] = propVal;
