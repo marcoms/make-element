@@ -105,9 +105,6 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 	const props: PropDefs = def.props || {};
 	const methods: MethodsDef = def.methods || {};
 
-	// whether the connectedCallback has been run
-	let hasConnected = false;
-
 	let readyFn = noop;
 	if (typeof def.ready === 'function') {
 		readyFn = def.ready;
