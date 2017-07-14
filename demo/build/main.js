@@ -252,152 +252,150 @@ function makeElement(def = {}) {
         };
     }
     const observedAttrs = Object.keys(registeredAttrs);
-    const DefinableCustomElement = class extends HTMLElement {
-        constructor() {
-            super();
-            this._hasConnected = false;
-            this._readyFn = readyFn;
-            this._props = registeredProps;
-            this._attrs = registeredAttrs;
-            for (const propName of Object.keys(this._props)) {
-                // convenience aliases
-                const internalProp = this._props[propName];
-                const hasLinkedAttr = typeof internalProp.attr === 'string';
-                const attrName = internalProp.attr;
-                const internalAttr = this._attrs[attrName];
-                // bind property methods to element context
-                internalProp.toAttr = internalProp.toAttr.bind(this);
-                internalProp.fromAttr = internalProp.fromAttr.bind(this);
-                internalProp.get = internalProp.get.bind(this);
-                internalProp.set = internalProp.set.bind(this);
-                internalProp.coerce = internalProp.coerce.bind(this);
-                Object.defineProperty(this, propName, {
-                    set(val) {
-                        let propVal = val;
-                        propVal = internalProp.coerce(propVal);
-                        if (internalProp.settingInitialValue) {
-                            internalProp.settingInitialValue = false;
-                        }
-                        internalProp.val = propVal;
-                        internalProp.set(propVal);
-                        /*
-                        We only propagate from the property to the attribute if:
-                            - A linked attribute was defined
-                            - The property setter is not being triggered by attributeChangedCallback
-                        */
-                        const beingInitialized = (this.hasAttribute(attrName)
-                            && !internalProp.hasSet);
-                        if (hasLinkedAttr && !beingInitialized) {
-                            const attrVal = internalProp.toAttr(propVal);
-                            // prevent the attribute from reflowing back to the
-                            // property in attributeChangedCallback
-                            internalAttr.needsPropagation = false;
-                            if (attrVal !== undefined) {
-                                // invoke attributeChangedCallback
-                                this.setAttribute(attrName, attrVal);
-                            }
-                            else {
-                                this.removeAttribute(attrName);
-                            }
-                        }
-                        internalProp.hasSet = true;
-                    },
-                    get() {
-                        const propVal = internalProp.get(internalProp.val);
-                        return propVal;
-                    },
-                });
-            }
-            // insert element template
-            const hasLocalTemplate = typeof def.template === 'string';
-            const hasRemoteTemplate = typeof def.templateUrl === 'string';
-            if (def.shadowDom) {
-                this.attachShadow({ mode: 'open' });
-            }
-            if (hasLocalTemplate) {
-                if (def.shadowDom) {
-                    this.shadowRoot.innerHTML = def.template;
-                }
-                else {
-                    this.innerHTML = def.template;
-                }
-            }
-            else if (hasRemoteTemplate) {
-                fetch(def.templateUrl).then((resp) => {
-                    if (resp.ok) {
-                        // 200 OK
-                        return resp.text();
-                    }
-                    else {
-                        // 404 et al
-                        throw new Error(`Couldn't fetch template at ${def.templateUrl}. ` +
-                            `Got HTTP status code ${status}`);
-                    }
-                }).then((template) => {
-                    if (def.shadowDom) {
-                        this.shadowRoot.innerHTML = template;
-                    }
-                    else {
-                        this.innerHTML = template;
-                    }
-                });
-            }
-            // id caching enabled by default
-            if (def.cacheIds !== false) {
-                this.$ = {};
-                let elsWithIds;
-                if (def.shadowDom) {
-                    elsWithIds = this.shadowRoot.querySelectorAll('[id]');
-                }
-                else {
-                    elsWithIds = this.querySelectorAll('[id]');
-                }
-                for (const el of elsWithIds) {
-                    const castEl = el;
-                    this.$[castEl.id] = castEl;
-                }
-            }
-        }
-        connectedCallback() {
-            if (this._hasConnected) {
-                return;
-            }
-            // only run once
-            for (const propName of Object.keys(this._props)) {
-                const internalProp = this._props[propName];
-                // if there is a value but the setter has not run
-                if (internalProp.val !== undefined
-                    && internalProp.val !== null
-                    && !internalProp.hasSet) {
-                    internalProp.settingInitialValue = true;
-                    // kick off property setter
-                    this[propName] = internalProp.val;
-                }
-            }
-            this._readyFn();
-            this._hasConnected = true;
-        }
-        attributeChangedCallback(attrName, oldVal, val) {
-            // only do work if the new value differs
-            if (val !== oldVal) {
-                // convenience aliases
-                const internalAttr = this._attrs[attrName];
-                internalAttr.val = val;
-                if (internalAttr.needsPropagation) {
-                    // propagation should only occur once
-                    internalAttr.needsPropagation = false;
-                    const propName = internalAttr.propName;
+    const DefinableCustomElement = (_a = class extends HTMLElement {
+            constructor() {
+                super();
+                this._hasConnected = false;
+                this._readyFn = readyFn;
+                this._props = registeredProps;
+                this._attrs = registeredAttrs;
+                for (const propName of Object.keys(this._props)) {
+                    // convenience aliases
                     const internalProp = this._props[propName];
-                    const propVal = internalProp.fromAttr(val);
-                    this[propName] = propVal;
+                    const hasLinkedAttr = typeof internalProp.attr === 'string';
+                    const attrName = internalProp.attr;
+                    const internalAttr = this._attrs[attrName];
+                    // bind property methods to element context
+                    internalProp.toAttr = internalProp.toAttr.bind(this);
+                    internalProp.fromAttr = internalProp.fromAttr.bind(this);
+                    internalProp.get = internalProp.get.bind(this);
+                    internalProp.set = internalProp.set.bind(this);
+                    internalProp.coerce = internalProp.coerce.bind(this);
+                    Object.defineProperty(this, propName, {
+                        set(val) {
+                            let propVal = val;
+                            propVal = internalProp.coerce(propVal);
+                            if (internalProp.settingInitialValue) {
+                                internalProp.settingInitialValue = false;
+                            }
+                            internalProp.val = propVal;
+                            internalProp.set(propVal);
+                            /*
+                            We only propagate from the property to the attribute if:
+                                - A linked attribute was defined
+                                - The property setter is not being triggered by attributeChangedCallback
+                            */
+                            const beingInitialized = (this.hasAttribute(attrName)
+                                && !internalProp.hasSet);
+                            if (hasLinkedAttr && !beingInitialized) {
+                                const attrVal = internalProp.toAttr(propVal);
+                                // prevent the attribute from reflowing back to the
+                                // property in attributeChangedCallback
+                                internalAttr.needsPropagation = false;
+                                if (attrVal !== undefined) {
+                                    // invoke attributeChangedCallback
+                                    this.setAttribute(attrName, attrVal);
+                                }
+                                else {
+                                    this.removeAttribute(attrName);
+                                }
+                            }
+                            internalProp.hasSet = true;
+                        },
+                        get() {
+                            const propVal = internalProp.get(internalProp.val);
+                            return propVal;
+                        },
+                    });
+                }
+                // insert element template
+                const hasLocalTemplate = typeof def.template === 'string';
+                const hasRemoteTemplate = typeof def.templateUrl === 'string';
+                if (def.shadowDom) {
+                    this.attachShadow({ mode: 'open' });
+                }
+                if (hasLocalTemplate) {
+                    if (def.shadowDom) {
+                        this.shadowRoot.innerHTML = def.template;
+                    }
+                    else {
+                        this.innerHTML = def.template;
+                    }
+                }
+                else if (hasRemoteTemplate) {
+                    fetch(def.templateUrl).then((resp) => {
+                        if (resp.ok) {
+                            // 200 OK
+                            return resp.text();
+                        }
+                        else {
+                            // 404 et al
+                            throw new Error(`Couldn't fetch template at ${def.templateUrl}. ` +
+                                `Got HTTP status code ${status}`);
+                        }
+                    }).then((template) => {
+                        if (def.shadowDom) {
+                            this.shadowRoot.innerHTML = template;
+                        }
+                        else {
+                            this.innerHTML = template;
+                        }
+                    });
+                }
+                // id caching enabled by default
+                if (def.cacheIds !== false) {
+                    this.$ = {};
+                    let elsWithIds;
+                    if (def.shadowDom) {
+                        elsWithIds = this.shadowRoot.querySelectorAll('[id]');
+                    }
+                    else {
+                        elsWithIds = this.querySelectorAll('[id]');
+                    }
+                    for (const el of elsWithIds) {
+                        const castEl = el;
+                        this.$[castEl.id] = castEl;
+                    }
                 }
             }
-        }
-        static get observedAttributes() {
-            // required for attributeChangedCallback to be called
-            return observedAttrs;
-        }
-    };
+            connectedCallback() {
+                if (this._hasConnected) {
+                    return;
+                }
+                // only run once
+                for (const propName of Object.keys(this._props)) {
+                    const internalProp = this._props[propName];
+                    // if there is a value but the setter has not run
+                    if (internalProp.val !== undefined
+                        && internalProp.val !== null
+                        && !internalProp.hasSet) {
+                        internalProp.settingInitialValue = true;
+                        // kick off property setter
+                        this[propName] = internalProp.val;
+                    }
+                }
+                this._readyFn();
+                this._hasConnected = true;
+            }
+            attributeChangedCallback(attrName, oldVal, val) {
+                // only do work if the new value differs
+                if (val !== oldVal) {
+                    // convenience aliases
+                    const internalAttr = this._attrs[attrName];
+                    internalAttr.val = val;
+                    if (internalAttr.needsPropagation) {
+                        // propagation should only occur once
+                        internalAttr.needsPropagation = false;
+                        const propName = internalAttr.propName;
+                        const internalProp = this._props[propName];
+                        const propVal = internalProp.fromAttr(val);
+                        this[propName] = propVal;
+                    }
+                }
+            }
+        },
+        _a.observedAttributes = observedAttrs,
+        _a);
     for (const fnName of Object.keys(methods)) {
         const fn = methods[fnName];
         if (typeof fn !== 'function') {
@@ -406,6 +404,7 @@ function makeElement(def = {}) {
         DefinableCustomElement.prototype[fnName] = fn;
     }
     return DefinableCustomElement;
+    var _a;
 }
 /* harmony default export */ __webpack_exports__["default"] = (makeElement);
 

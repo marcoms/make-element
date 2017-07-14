@@ -210,6 +210,8 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 	const observedAttrs = Object.keys(registeredAttrs);
 
 	const DefinableCustomElement: CustomElementClass = class extends HTMLElement {
+		static observedAttributes = observedAttrs;
+
 		$: IdMap;
 
 		private _hasConnected: boolean = false;
@@ -383,11 +385,6 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 					this[propName] = propVal;
 				}
 			}
-		}
-
-		static get observedAttributes() {
-			// required for attributeChangedCallback to be called
-			return observedAttrs;
 		}
 	};
 
