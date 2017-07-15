@@ -46,6 +46,7 @@ export interface CustomElementClass extends Function {
 
 export interface CustomElement extends HTMLElement {
 	$: IdMap;
+	[index: string]: any;
 }
 
 // private interfaces
