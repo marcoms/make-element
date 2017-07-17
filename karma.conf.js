@@ -11,6 +11,7 @@ module.exports = (config) => {
 
     files: [
       'src/*.ts',
+      'test/*.ts',
     ],
 
     preprocessors: {
@@ -20,6 +21,7 @@ module.exports = (config) => {
     karmaTypescriptConfig: {
       compilerOptions: {
         target: 'es6',
+        baseUrl: __dirname,
       },
     },
   })
