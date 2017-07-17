@@ -1,7 +1,7 @@
 module.exports = (config) => {
   config.set({
     frameworks: ['mocha', 'karma-typescript'],
-    browsers: ['chromeHeadless'],
+    browsers: ['ChromeHeadless'],
     singleRun: true,
     concurrency: Infinity,
     reporters: ['mocha'],
@@ -22,17 +22,5 @@ module.exports = (config) => {
         target: 'es6',
       },
     },
-
-    customLaunchers: {
-      chromeHeadless: {
-        base: 'Chrome',
-        flags: [
-          '--headless',
-          '--disable-gpu',
-          '--remote-debugging-port=9222',
-        ],
-      },
-    },
-
   })
 };
