@@ -3,6 +3,7 @@
     "version": "4.1.2",
     "description": "Create custom elements without boilerplate",
     "main": "build/make-element.js",
+    "types": "build/src/index.d.ts",
     "repository": {},
     "keywords": [
         "web-components",

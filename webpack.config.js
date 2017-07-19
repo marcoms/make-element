@@ -18,6 +18,9 @@ module.exports = {
 			{
 				test: /\.ts$/,
 				loader: 'ts-loader',
+				options: {
+					logLevel: 'warn',
+				},
 			},
 		]
 	},
