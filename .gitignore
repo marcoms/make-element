@@ -1,2 +1,5 @@
 node_modules/
 src/**/*.js
+test/**/*.js
+build/
+demo/build/
