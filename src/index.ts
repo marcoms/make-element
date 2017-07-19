@@ -5,7 +5,7 @@ export interface CoerceFn { (val: any): any; }
 export interface FromAttrFn { (val: string): any; }
 export interface ToAttrFn { (val: any): string; }
 
-type ReadyFn = ArbitraryFn;
+export type ReadyFn = ArbitraryFn;
 
 export interface ElementDef {
 	props?: PropDefs;
