@@ -4,3 +4,9 @@ export function customElName() {
 	++customElId;
 	return `x-${customElId}`;
 }
+
+declare global {
+	interface Window {
+		ShadowRoot: any;
+	}
+}
