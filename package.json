@@ -14,7 +14,8 @@
         "typescript"
     ],
     "scripts": {
-        "build": "webpack"
+        "build": "webpack",
+        "test": "karma start"
     },
     "author": "Marco Scannadinari <m@scannadinari.co.uk>",
     "license": "MIT",
