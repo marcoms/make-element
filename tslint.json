@@ -1,0 +1,71 @@
+{
+	"rules": {
+		"indent": [true, "tabs"],
+		"quotemark": [true, "single"],
+		"no-trailing-whitespace": true,
+		"semicolon": [true, "always"],
+		"max-line-length": [true, 80],
+		"no-duplicate-variable": true,
+		"no-eval": true,
+		"whitespace": [
+			true,
+			"check-branch",
+			"check-decl",
+			"check-module",
+			"check-operator",
+			"check-operator",
+			"check-preblock",
+			"check-separator",
+			"check-type",
+			"check-typecast"
+		],
+
+		"trailing-comma": [
+			true,
+
+			{
+				"multiline": "always",
+				"singleline": "never"
+			}
+		],
+
+		"comment-format": [
+			true,
+			"check-space"
+		],
+
+		"no-console": [true, "log"],
+		"no-conditional-assignment": true,
+		"no-debugger": true,
+		"curly": true,
+		"switch-default": true,
+		"triple-equals": true,
+		"no-arg": true,
+		"no-switch-case-fall-through": true,
+		"no-magic-numbers": true,
+		"no-construct": true,
+		"no-string-throw": true,
+		"no-unused-expression": true,
+		"radix": true,
+		"no-unused-variable": true,
+		"class-name": true,
+		"variable-name": [
+			true,
+			"check-format",
+			"allow-leading-underscore",
+			"allow-pascal-case"
+		],
+
+		"eofline": true,
+		"linebreak-style": [
+			true,
+			"LF"
+		],
+
+		"new-parens": true,
+		"one-variable-per-declaration": [true],
+		"no-var-keyword": true,
+		"object-literal-shorthand": true,
+		"prefer-for-of": true
+	}
+}
