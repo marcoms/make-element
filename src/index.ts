@@ -1,9 +1,9 @@
-export interface ArbitraryFn { (...args: any[]): any; }
-export interface GetFn { (val: any): void; }
-export interface SetFn { (val: any): any; }
-export interface CoerceFn { (val: any): any; }
-export interface FromAttrFn { (val: string): any; }
-export interface ToAttrFn { (val: any): string; }
+export interface ArbitraryFn { (this: CustomElement, ...args: any[]): any; }
+export interface GetFn { (this: CustomElement, val: any): void; }
+export interface SetFn { (this: CustomElement, val: any): any; }
+export interface CoerceFn { (this: CustomElement, val: any): any; }
+export interface FromAttrFn { (this: CustomElement, val: string): any; }
+export interface ToAttrFn { (this: CustomElement, val: any): string; }
 
 export type ReadyFn = ArbitraryFn;
 
@@ -230,25 +230,18 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 				const attrName = internalProp.attr;
 				const internalAttr = this._attrs[attrName] as InternalAttr;
 
-				// bind property methods to element context
-				internalProp.toAttr = internalProp.toAttr.bind(this);
-				internalProp.fromAttr = internalProp.fromAttr.bind(this);
-				internalProp.get = internalProp.get.bind(this);
-				internalProp.set = internalProp.set.bind(this);
-				internalProp.coerce = internalProp.coerce.bind(this);
-
 				Object.defineProperty(this, propName, {
 					set(val) {
 						let propVal = val;
 
-						propVal = internalProp.coerce(propVal);
+						propVal = internalProp.coerce.call(this, propVal);
 
 						if (internalProp.settingInitialValue) {
 							internalProp.settingInitialValue = false;
 						}
 
 						internalProp.val = propVal;
-						internalProp.set(propVal);
+						internalProp.set.call(this, propVal);
 
 						/*
 						We only propagate from the property to the attribute if:
@@ -262,7 +255,7 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 						);
 
 						if (hasLinkedAttr && !beingInitialized) {
-							const attrVal = internalProp.toAttr(propVal);
+							const attrVal = internalProp.toAttr.call(this, propVal);
 
 							// prevent the attribute from reflowing back to the
 							// property in attributeChangedCallback
@@ -280,7 +273,7 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 					},
 
 					get() {
-						const propVal = internalProp.get(internalProp.val);
+						const propVal = internalProp.get.call(this, internalProp.val);
 						return propVal;
 					},
 				});
@@ -382,7 +375,7 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 					const propName = internalAttr.propName;
 					const internalProp = this._props[propName] as InternalProp;
 
-					const propVal = internalProp.fromAttr(val);
+					const propVal = internalProp.fromAttr.call(this, val);
 					this[propName] = propVal;
 				}
 			}
