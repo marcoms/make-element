@@ -4,7 +4,7 @@ import me from 'src/index';
 import { customElName } from './tools';
 
 describe('template', () => {
-	it('should write the template to the element', () => {
+	it('should write template to element', () => {
 		const El = me({
 			template: 'template',
 		});
@@ -14,7 +14,7 @@ describe('template', () => {
 		assert.strictEqual(el.innerHTML, 'template');
 	});
 
-	it('should write the template to the shadow DOM, if enabled', () => {
+	it('should write template to shadow DOM, if enabled', () => {
 		const El = me({
 			shadowDom: true,
 			template: 'template',

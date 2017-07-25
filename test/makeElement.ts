@@ -8,7 +8,7 @@ describe('makeElement', () => {
 		const El = me();
 	});
 
-	it('should run with an empty definition', () => {
+	it('should run with empty definition', () => {
 		const El = me({});
 	});
 });

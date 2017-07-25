@@ -4,13 +4,13 @@ import me from 'src/index';
 import { customElName } from './tools';
 
 describe('props', () => {
-	it('should work with an empty definition', () => {
+	it('should work with empty definition', () => {
 		const El = me({
 			props: {},
 		});
 	});
 
-	it('should work with one property defined', () => {
+	it('should work with property defined', () => {
 		const El = me({
 			props: {
 				prop: {},
@@ -24,7 +24,7 @@ describe('props', () => {
 		assert.strictEqual(el.prop, 24);
 	});
 
-	it('should call the setter function after updating the value', () => {
+	it('should call setter after updating value', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -41,7 +41,7 @@ describe('props', () => {
 		el.prop = 24;
 	});
 
-	it('should call the setter function with the element context', () => {
+	it('should call setter with element context', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -57,7 +57,7 @@ describe('props', () => {
 		el.prop = 24;
 	});
 
-	it('should use the getter function when retrieving the value', () => {
+	it('should use getter when retrieving value', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -75,7 +75,7 @@ describe('props', () => {
 		assert.strictEqual(el.prop, 48);
 	});
 
-	it('should call the getter function with the element context', () => {
+	it('should call getter with element context', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -94,7 +94,7 @@ describe('props', () => {
 		el.prop;
 	});
 
-	it('should flow to a linked attribute', () => {
+	it('should flow to linked attribute', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -114,7 +114,7 @@ describe('props', () => {
 		assert.strictEqual(el.getAttribute('prop'), '24');
 	});
 
-	it('should be initialized from a linked attribute', () => {
+	it('should be initialized from linked attribute', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -132,7 +132,7 @@ describe('props', () => {
 		assert.strictEqual((el as any).prop, '24');
 	});
 
-	it('should properly reflect truthiness for a boolean attribute', () => {
+	it('should properly reflect truthiness for boolean attribute', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -149,7 +149,7 @@ describe('props', () => {
 		assert.strictEqual(el.getAttribute('prop'), '');
 	});
 
-	it('should properly reflect falsiness for a boolean attribute', () => {
+	it('should properly reflect falsiness for boolean attribute', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -166,7 +166,7 @@ describe('props', () => {
 		assert.strictEqual(el.getAttribute('prop'), null);
 	});
 
-	it('should serialize the property value with the toAttr function', () => {
+	it('should serialize value with toAttr', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -185,7 +185,7 @@ describe('props', () => {
 		assert.strictEqual(el.getAttribute('prop'), '24-toAttr');
 	});
 
-	it('should call the toAttr function with the element context', () => {
+	it('should call toAttr with element context', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -203,7 +203,7 @@ describe('props', () => {
 		el.prop = 24;
 	});
 
-	it('should deserialize the attribute value with the fromAttr function', () => {
+	it('should deserialize attribute value with fromAttr', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -225,7 +225,7 @@ describe('props', () => {
 		assert.strictEqual((el as any).prop, 24);
 	});
 
-	it('should call the fromAttr function with the element context', () => {
+	it('should call fromAttr with element context', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -243,7 +243,7 @@ describe('props', () => {
 		el.setAttribute('prop', '24');
 	});
 
-	it('should use the coerce function return value as the property value', () => {
+	it('should use coerce return value as property value', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -261,7 +261,7 @@ describe('props', () => {
 		assert.strictEqual(el.prop, '24-coerce');
 	});
 
-	it('should initialize the property value with init', () => {
+	it('should initialize property value with init', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -275,7 +275,7 @@ describe('props', () => {
 		assert.strictEqual(el.prop, 24);
 	});
 
-	it('should be prefer a linked attribute initialization value over one from init', () => {
+	it('should prefer initialization from linked attribute vs init', () => {
 		const El = me({
 			props: {
 				prop: {
@@ -296,7 +296,7 @@ describe('props', () => {
 		assert.strictEqual((el as any).prop, '48');
 	});
 
-	it('should coerce the initial property value', () => {
+	it('should coerce initial value', () => {
 		const El = me({
 			props: {
 				prop: {

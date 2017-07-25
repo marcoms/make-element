@@ -4,7 +4,7 @@ import me from 'src/index';
 import { customElName } from './tools';
 
 describe('cacheIds', () => {
-	it('should store elements with id attributes on the $ object', () => {
+	it('should store elements with ids in $', () => {
 		const El = me({
 			template: `
 				<div id="a"></div>
@@ -21,7 +21,7 @@ describe('cacheIds', () => {
 		assert.strictEqual(el.$['c'].id, 'c');
 	});
 
-	it('should store elements with id attributes on the $ object, with shadow DOM enabled', () => {
+	it('should store elements with ids in $, with shadow DOM enabled', () => {
 		const El = me({
 			shadowDom: true,
 			template: `

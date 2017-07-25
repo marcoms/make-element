@@ -4,7 +4,7 @@ import me from 'src/index';
 import { customElName } from './tools';
 
 describe('methods', () => {
-	it('should attach a single method to the element prototype', () => {
+	it('should attach method to prototype', () => {
 		let calledMethod = false;
 
 		const El = me({
@@ -24,7 +24,7 @@ describe('methods', () => {
 		assert.isTrue(calledMethod);
 	});
 
-	it('should attach multiple methods to the element prototype', () => {
+	it('should attach multiple methods to prototype', () => {
 		let calledMethodA = false;
 		let calledMethodB = false;
 		let calledMethodC = false;
@@ -61,7 +61,7 @@ describe('methods', () => {
 		assert.isTrue(calledMethodC);
 	});
 
-	it('should run methods with the element context', () => {
+	it('should run methods with element context', () => {
 		const El = me({
 			methods: {
 				method() {

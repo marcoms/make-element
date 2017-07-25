@@ -4,7 +4,7 @@ import me from 'src/index';
 import { customElName } from './tools';
 
 describe('ready', () => {
-	it('should call the ready function after the template and properties have been set up', () => {
+	it('should call ready after template and properties are done', () => {
 		const El = me({
 			props: {
 				propA: {
@@ -41,7 +41,7 @@ describe('ready', () => {
 		customElements.define(elName, El);
 	});
 
-	it('should call the ready function with the element context', () => {
+	it('should call ready with element context', () => {
 		const El = me({
 			ready() {
 				assert.instanceOf(this, El);

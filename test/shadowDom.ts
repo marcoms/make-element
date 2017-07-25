@@ -4,7 +4,7 @@ import me from 'src/index';
 import { customElName } from './tools';
 
 describe('shadowDom', () => {
-	it('should attach a shadow root if true', () => {
+	it('should attach shadow root if true', () => {
 		const El = me({
 			shadowDom: true,
 		});
@@ -14,7 +14,7 @@ describe('shadowDom', () => {
 		assert.instanceOf(el.shadowRoot, window.ShadowRoot);
 	});
 
-	it('should not attach a shadow root if false', () => {
+	it('should not attach shadow root if false', () => {
 		const El = me({
 			shadowDom: false,
 		});

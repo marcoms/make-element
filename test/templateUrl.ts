@@ -4,7 +4,7 @@ import me from 'src/index';
 import { customElName } from './tools';
 
 describe('templateUrl', () => {
-	it('should write the contents of a local template file to the element', () => {
+	it('should write contents of local template file to element', () => {
 		const El = me({
 			templateUrl: '/base/test/template.html',
 		});
@@ -20,7 +20,7 @@ describe('templateUrl', () => {
 		});
 	}).timeout(1000);
 
-	it('should write the contents of a remote template file to the element', () => {
+	it('should write contents of remote template file to element', () => {
 		if (!navigator.onLine) {
 			throw new Error('network connectivity is required');
 		}
@@ -43,7 +43,7 @@ describe('templateUrl', () => {
 		});
 	}).timeout(5000);
 
-	it('should write the contents of a template file to the shadow DOM, if enabled', () => {
+	it('should write contents of template file to shadow DOM, if enabled', () => {
 		const El = me({
 			template: 'template',
 			shadowDom: true,
