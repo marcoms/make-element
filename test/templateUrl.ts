@@ -1,7 +1,7 @@
-import {assert} from 'chai';
+import { assert } from 'chai';
 
 import me from 'src/index';
-import {customElName} from './tools';
+import { customElName } from './tools';
 
 describe('templateUrl', () => {
 	it('should write the contents of a local template file to the element', () => {

@@ -1,10 +1,10 @@
-import {assert} from 'chai';
+import { assert } from 'chai';
 
 import me from 'src/index';
-import {customElName} from './tools';
+import { customElName } from './tools';
 
 describe('ready', () => {
-	it('should run the ready function after the template and properties have been set up', () => {
+	it('should call the ready function after the template and properties have been set up', () => {
 		const El = me({
 			props: {
 				propA: {
@@ -39,5 +39,16 @@ describe('ready', () => {
 		el.setAttribute('prop-c', '64');
 		document.body.appendChild(el);
 		customElements.define(elName, El);
+	});
+
+	it('should call the ready function with the element context', () => {
+		const El = me({
+			ready() {
+				assert.instanceOf(this, El);
+			},
+		});
+
+		customElements.define(customElName(), El);
+		const el = new El();
 	});
 });

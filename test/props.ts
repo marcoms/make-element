@@ -1,7 +1,7 @@
-import {assert} from 'chai';
+import { assert } from 'chai';
 
 import me from 'src/index';
-import {customElName} from './tools';
+import { customElName } from './tools';
 
 describe('props', () => {
 	it('should work with an empty definition', () => {
@@ -41,6 +41,22 @@ describe('props', () => {
 		el.prop = 24;
 	});
 
+	it('should call the setter function with the element context', () => {
+		const El = me({
+			props: {
+				prop: {
+					set() {
+						assert.instanceOf(this, El);
+					},
+				},
+			},
+		});
+
+		customElements.define(customElName(), El);
+		const el = new El();
+		el.prop = 24;
+	});
+
 	it('should use the getter function when retrieving the value', () => {
 		const El = me({
 			props: {
@@ -57,6 +73,25 @@ describe('props', () => {
 
 		el.prop = 24;
 		assert.strictEqual(el.prop, 48);
+	});
+
+	it('should call the getter function with the element context', () => {
+		const El = me({
+			props: {
+				prop: {
+					get() {
+						assert.instanceOf(this, El);
+						return 24;
+					},
+				},
+			},
+		});
+
+		customElements.define(customElName(), El);
+		const el = new El();
+
+		// tslint:disable-next-line no-unused-expression
+		el.prop;
 	});
 
 	it('should flow to a linked attribute', () => {
@@ -146,8 +181,26 @@ describe('props', () => {
 		customElements.define(customElName(), El);
 		const el = new El();
 
-		el.prop = 'hello';
-		assert.strictEqual(el.getAttribute('prop'), 'hello-toAttr');
+		el.prop = 24;
+		assert.strictEqual(el.getAttribute('prop'), '24-toAttr');
+	});
+
+	it('should call the toAttr function with the element context', () => {
+		const El = me({
+			props: {
+				prop: {
+					attr: 'prop',
+					toAttr() {
+						assert.instanceOf(this, El);
+						return '24';
+					},
+				},
+			},
+		});
+
+		customElements.define(customElName(), El);
+		const el = new El();
+		el.prop = 24;
 	});
 
 	it('should deserialize the attribute value with the fromAttr function', () => {
@@ -170,6 +223,24 @@ describe('props', () => {
 		customElements.define(elName, El);
 
 		assert.strictEqual((el as any).prop, 24);
+	});
+
+	it('should call the fromAttr function with the element context', () => {
+		const El = me({
+			props: {
+				prop: {
+					attr: 'prop',
+					fromAttr() {
+						assert.instanceOf(this, El);
+						return 24;
+					},
+				},
+			},
+		});
+
+		const elName = customElName();
+		const el = document.createElement(elName);
+		el.setAttribute('prop', '24');
 	});
 
 	it('should use the coerce function return value as the property value', () => {

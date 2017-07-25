@@ -1,7 +1,7 @@
-import {assert} from 'chai';
+import { assert } from 'chai';
 
 import me from 'src/index';
-import {customElName} from './tools';
+import { customElName } from './tools';
 
 describe('methods', () => {
 	it('should attach a single method to the element prototype', () => {
@@ -59,5 +59,19 @@ describe('methods', () => {
 		assert.isTrue(calledMethodA);
 		assert.isTrue(calledMethodB);
 		assert.isTrue(calledMethodC);
+	});
+
+	it('should run methods with the element context', () => {
+		const El = me({
+			methods: {
+				method() {
+					assert.instanceOf(this, El);
+				},
+			},
+		});
+
+		customElements.define(customElName(), El);
+		const el = new El();
+		el.method();
 	});
 });
