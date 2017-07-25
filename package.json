@@ -1,6 +1,6 @@
 {
     "name": "@marcoms/make-element",
-    "version": "4.1.5",
+    "version": "4.1.6",
     "description": "Create custom elements without boilerplate",
     "main": "build/make-element.js",
     "types": "build/src/index.d.ts",
