@@ -37,7 +37,7 @@ export interface MethodsDef {
 }
 
 export interface IdMap {
-	[index: string]: HTMLElement;
+	[index: string]: IdentifiedElement;
 }
 
 export interface CustomElementClass extends Function {
@@ -45,9 +45,14 @@ export interface CustomElementClass extends Function {
 }
 
 export interface CustomElement extends HTMLElement {
-	$: IdMap;
+	$?: IdMap;
 	[index: string]: any;
 }
+
+// includes HTMLElement and CustomElement possibilities
+// `interface` is used instead of `type` so that the interface alias is used
+// by code intelligence tools
+export interface IdentifiedElement extends CustomElement {}
 
 // private interfaces
 
