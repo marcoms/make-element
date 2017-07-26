@@ -123,10 +123,10 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 
 		const propDef = props[propName];
 
-		let val = null;
+		let init = null;
 		if (propDef.init !== undefined) {
 			// initial value for the property
-			val = propDef.init;
+			init = propDef.init;
 		}
 
 		let hasAttr = typeof propDef.attr === 'string';
@@ -183,8 +183,11 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 		}
 
 		registeredProps[propName] = {
+			// initial value
+			init,
+
 			// internal value
-			val,
+			val: null,
 
 			// linked attribute name
 			attr: attrName,
@@ -222,11 +225,19 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 
 		private _hasConnected: boolean = false;
 		private _readyFn: ReadyFn = readyFn;
-		private _props: RegisteredProps = registeredProps;
-		private _attrs: RegisteredAttrs = registeredAttrs;
+		private _props: RegisteredProps = {};
+		private _attrs: RegisteredAttrs = {};
 
 		constructor() {
 			super();
+
+			Object.keys(registeredProps).map((prop) => {
+				this._props[prop] = Object.assign({}, registeredProps[prop]);
+			});
+
+			Object.keys(registeredAttrs).map((attr) => {
+				this._attrs[attr] = Object.assign({}, registeredAttrs[attr]);
+			});
 
 			for (const propName of Object.keys(this._props)) {
 				// convenience aliases
@@ -348,17 +359,17 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 			for (const propName of Object.keys(this._props)) {
 				const internalProp = this._props[propName] as InternalProp;
 
-				// if there is a value but the setter has not run
+				// if there is a defined initial value but the setter has not run
 
 				if (
-					internalProp.val !== undefined
-					&& internalProp.val !== null
+					internalProp.init !== undefined
+					&& internalProp.init !== null
 					&& !internalProp.hasSet
 				) {
 					internalProp.settingInitialValue = true;
 
 					// kick off property setter
-					this[propName] = internalProp.val;
+					this[propName] = internalProp.init;
 				}
 			}
 
