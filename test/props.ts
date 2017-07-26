@@ -271,8 +271,35 @@ describe('props', () => {
 		});
 
 		customElements.define(customElName(), El);
-		const el = new El();
-		assert.strictEqual(el.prop, 24);
+
+		const elA = new El();
+		document.body.appendChild(elA);
+		assert.strictEqual(elA.prop, 24);
+
+		const elB = new El();
+		document.body.appendChild(elB);
+		assert.strictEqual(elB.prop, 24);
+	});
+
+	it('should flow initialization value to attribute', () => {
+		const El = me({
+			props: {
+				prop: {
+					attr: 'prop',
+					init: 24,
+				},
+			},
+		});
+
+		customElements.define(customElName(), El);
+
+		const elA = new El();
+		document.body.appendChild(elA);
+		assert.strictEqual(elA.getAttribute('prop'), '24');
+
+		const elB = new El();
+		document.body.appendChild(elB);
+		assert.strictEqual(elB.getAttribute('prop'), '24');
 	});
 
 	it('should prefer initialization from linked attribute vs init', () => {
