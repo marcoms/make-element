@@ -1,11 +1,15 @@
-export interface ArbitraryFn { (this: CustomElement, ...args: any[]): any; }
+export interface ArbitraryFn { (...args: any[]): any; }
+export interface BoundArbitraryFn {
+	(this: CustomElement, ...args: any[]): any;
+
+}
 export interface GetFn { (this: CustomElement, val: any): void; }
 export interface SetFn { (this: CustomElement, val: any): any; }
 export interface CoerceFn { (this: CustomElement, val: any): any; }
 export interface FromAttrFn { (this: CustomElement, val: string): any; }
 export interface ToAttrFn { (this: CustomElement, val: any): string; }
 
-export type ReadyFn = ArbitraryFn;
+export type ReadyFn = BoundArbitraryFn;
 
 export interface ElementDef {
 	props?: PropDefs;
@@ -33,7 +37,7 @@ export interface PropDef {
 }
 
 export interface MethodsDef {
-	[index: string]: ArbitraryFn;
+	[index: string]: BoundArbitraryFn;
 }
 
 export interface IdMap {
@@ -103,6 +107,14 @@ function convertToBoolAttr(val: any): BoolAttr {
 		return '';
 	} else {
 		return undefined;
+	}
+}
+
+function defer(work: ArbitraryFn) {
+	if (document.readyState !== 'interactive') {
+		document.addEventListener('DOMContentLoaded', work);
+	} else {
+		work();
 	}
 }
 
@@ -254,40 +266,42 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 
 						propVal = internalProp.coerce.call(this, propVal);
 
-						if (internalProp.settingInitialValue) {
-							internalProp.settingInitialValue = false;
-						}
-
-						internalProp.val = propVal;
-						internalProp.set.call(this, propVal);
-
-						/*
-						We only propagate from the property to the attribute if:
-							- A linked attribute was defined
-							- The property setter is not being triggered by attributeChangedCallback
-						*/
-
-						const beingInitialized = (
-							this.hasAttribute(attrName)
-							&& !internalProp.hasSet
-						);
-
-						if (hasLinkedAttr && !beingInitialized) {
-							const attrVal = internalProp.toAttr.call(this, propVal);
-
-							// prevent the attribute from reflowing back to the
-							// property in attributeChangedCallback
-							internalAttr.needsPropagation = false;
-
-							if (attrVal !== undefined) {
-								// invoke attributeChangedCallback
-								this.setAttribute(attrName, attrVal);
-							} else {
-								this.removeAttribute(attrName);
+						defer(() => {
+							if (internalProp.settingInitialValue) {
+								internalProp.settingInitialValue = false;
 							}
-						}
 
-						internalProp.hasSet = true;
+							internalProp.val = propVal;
+							internalProp.set.call(this, propVal);
+
+							/*
+							We only propagate from the property to the attribute if:
+								- A linked attribute was defined
+								- The property setter is not being triggered by attributeChangedCallback
+							*/
+
+							const beingInitialized = (
+								this.hasAttribute(attrName)
+								&& !internalProp.hasSet
+							);
+
+							if (hasLinkedAttr && !beingInitialized) {
+								const attrVal = internalProp.toAttr.call(this, propVal);
+
+								// prevent the attribute from reflowing back to the
+								// property in attributeChangedCallback
+								internalAttr.needsPropagation = false;
+
+								if (attrVal !== undefined) {
+									// invoke attributeChangedCallback
+									this.setAttribute(attrName, attrVal);
+								} else {
+									this.removeAttribute(attrName);
+								}
+							}
+
+							internalProp.hasSet = true;
+						});
 					},
 
 					get() {
@@ -356,26 +370,29 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 				return;
 			}
 
-			// only run once
+			defer(() => {
+				// only run once
 
-			for (const propName of Object.keys(this._props)) {
-				const internalProp = this._props[propName] as InternalProp;
+				for (const propName of Object.keys(this._props)) {
+					const internalProp = this._props[propName] as InternalProp;
 
-				// if there is a defined initial value but the setter has not run
+					// if there is a defined initial value but the setter has not run
 
-				if (
-					internalProp.init !== undefined
-					&& internalProp.init !== null
-					&& !internalProp.hasSet
-				) {
-					internalProp.settingInitialValue = true;
+					if (
+						internalProp.init !== undefined
+						&& internalProp.init !== null
+						&& !internalProp.hasSet
+					) {
+						internalProp.settingInitialValue = true;
 
-					// kick off property setter
-					this[propName] = internalProp.init;
+						// kick off property setter
+						this[propName] = internalProp.init;
+					}
 				}
-			}
 
-			this._readyFn();
+				this._readyFn();
+			});
+
 			this._hasConnected = true;
 		}
 
@@ -387,14 +404,16 @@ function makeElement(def: ElementDef = {}): CustomElementClass {
 				internalAttr.val = val;
 
 				if (internalAttr.needsPropagation) {
-					// propagation should only occur once
-					internalAttr.needsPropagation = false;
+					defer(() => {
+						// propagation should only occur once
+						internalAttr.needsPropagation = false;
 
-					const propName = internalAttr.propName;
-					const internalProp = this._props[propName] as InternalProp;
+						const propName = internalAttr.propName;
+						const internalProp = this._props[propName] as InternalProp;
 
-					const propVal = internalProp.fromAttr.call(this, val);
-					this[propName] = propVal;
+						const propVal = internalProp.fromAttr.call(this, val);
+						this[propName] = propVal;
+					});
 				}
 			}
 		}
