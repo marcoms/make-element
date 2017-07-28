@@ -110,12 +110,20 @@ function convertToBoolAttr(val: any): BoolAttr {
 	}
 }
 
-function defer(work: ArbitraryFn) {
-	if (document.readyState !== 'interactive') {
-		document.addEventListener('DOMContentLoaded', work);
-	} else {
-		work();
-	}
+// returns true if the work was deferred
+
+export function defer(work: ArbitraryFn): Promise<boolean> {
+	return new Promise((resolve, reject) => {
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', () => {
+				work();
+				resolve(true);
+			});
+		} else {
+			work();
+			resolve(false);
+		}
+	});
 }
 
 function makeElement(def: ElementDef = {}): CustomElementClass {
