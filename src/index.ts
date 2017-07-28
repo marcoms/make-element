@@ -96,7 +96,9 @@ function identity<T>(val: T): T {
 	return val;
 }
 
-function convertToBoolAttr(val: any): string | undefined {
+type BoolAttr = string | undefined;
+
+function convertToBoolAttr(val: any): BoolAttr {
 	if (Boolean(val)) {
 		return '';
 	} else {
