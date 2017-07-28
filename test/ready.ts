@@ -51,4 +51,16 @@ describe('ready', () => {
 		customElements.define(customElName(), El);
 		const el = new El();
 	});
+
+	it('should call ready after DOMContentLoaded', () => {
+		const El = me({
+			ready() {
+				assert.notStrictEqual(document.readyState, 'complete');
+			},
+		});
+
+		customElements.define(customElName(), El);
+		const el = new El();
+		document.body.appendChild(el);
+	});
 });

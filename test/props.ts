@@ -1,7 +1,8 @@
+const parallel = require('mocha.parallel');
 import { assert } from 'chai';
 
-import me from 'src/index';
-import { customElName } from './tools';
+import {default as me, defer} from 'src/index';
+import {customElName} from './tools';
 
 describe('props', () => {
 	it('should work with empty definition', () => {
@@ -21,7 +22,10 @@ describe('props', () => {
 		const el = new El();
 
 		el.prop = 24;
-		assert.strictEqual(el.prop, 24);
+
+		return defer(() => {
+			assert.strictEqual(el.prop, 24);
+		});
 	});
 
 	it('should call setter after updating value', () => {
@@ -72,7 +76,10 @@ describe('props', () => {
 		const el = new El();
 
 		el.prop = 24;
-		assert.strictEqual(el.prop, 48);
+
+		return defer(() => {
+			assert.strictEqual(el.prop, 48);
+		});
 	});
 
 	it('should call getter with element context', () => {
@@ -110,8 +117,11 @@ describe('props', () => {
 		assert.isNull(el.getAttribute('prop'));
 
 		el.prop = 24;
-		assert.strictEqual(el.prop, 24);
-		assert.strictEqual(el.getAttribute('prop'), '24');
+
+		return defer(() => {
+			assert.strictEqual(el.prop, 24);
+			assert.strictEqual(el.getAttribute('prop'), '24');
+		});
 	});
 
 	it('should be initialized from linked attribute', () => {
@@ -129,7 +139,10 @@ describe('props', () => {
 		document.body.appendChild(el);
 
 		customElements.define(elName, El);
-		assert.strictEqual((el as any).prop, '24');
+
+		return defer(() => {
+			assert.strictEqual((el as any).prop, '24');
+		});
 	});
 
 	it('should properly reflect truthiness for boolean attribute', () => {
@@ -146,7 +159,10 @@ describe('props', () => {
 		const el = new El();
 
 		el.prop = 24;
-		assert.strictEqual(el.getAttribute('prop'), '');
+
+		return defer(() => {
+			assert.strictEqual(el.getAttribute('prop'), '');
+		});
 	});
 
 	it('should properly reflect falsiness for boolean attribute', () => {
@@ -163,7 +179,10 @@ describe('props', () => {
 		const el = new El();
 
 		el.prop = 0;
-		assert.strictEqual(el.getAttribute('prop'), null);
+
+		return defer(() => {
+			assert.strictEqual(el.getAttribute('prop'), null);
+		});
 	});
 
 	it('should serialize value with toAttr', () => {
@@ -182,7 +201,10 @@ describe('props', () => {
 		const el = new El();
 
 		el.prop = 24;
-		assert.strictEqual(el.getAttribute('prop'), '24-toAttr');
+
+		return defer(() => {
+			assert.strictEqual(el.getAttribute('prop'), '24-toAttr');
+		});
 	});
 
 	it('should call toAttr with element context', () => {
@@ -222,7 +244,9 @@ describe('props', () => {
 
 		customElements.define(elName, El);
 
-		assert.strictEqual((el as any).prop, 24);
+		return defer(() => {
+			assert.strictEqual((el as any).prop, 24);
+		});
 	});
 
 	it('should call fromAttr with element context', () => {
@@ -258,7 +282,10 @@ describe('props', () => {
 		const el = new El();
 
 		el.prop = 24;
-		assert.strictEqual(el.prop, '24-coerce');
+
+		return defer(() => {
+			assert.strictEqual(el.prop, '24-coerce');
+		});
 	});
 
 	it('should initialize property value with init', () => {
@@ -273,12 +300,14 @@ describe('props', () => {
 		customElements.define(customElName(), El);
 
 		const elA = new El();
-		document.body.appendChild(elA);
-		assert.strictEqual(elA.prop, 24);
-
 		const elB = new El();
+		document.body.appendChild(elA);
 		document.body.appendChild(elB);
-		assert.strictEqual(elB.prop, 24);
+
+		return defer(() => {
+			assert.strictEqual(elA.prop, 24);
+			assert.strictEqual(elB.prop, 24);
+		});
 	});
 
 	it('should flow initialization value to attribute', () => {
@@ -294,12 +323,14 @@ describe('props', () => {
 		customElements.define(customElName(), El);
 
 		const elA = new El();
-		document.body.appendChild(elA);
-		assert.strictEqual(elA.getAttribute('prop'), '24');
-
 		const elB = new El();
+		document.body.appendChild(elA);
 		document.body.appendChild(elB);
-		assert.strictEqual(elB.getAttribute('prop'), '24');
+
+		return defer(() => {
+			assert.strictEqual(elA.getAttribute('prop'), '24');
+			assert.strictEqual(elB.getAttribute('prop'), '24');
+		});
 	});
 
 	it('should prefer initialization from linked attribute vs init', () => {
@@ -320,7 +351,9 @@ describe('props', () => {
 		document.body.appendChild(el);
 		customElements.define(elName, El);
 
-		assert.strictEqual((el as any).prop, '48');
+		return defer(() => {
+			assert.strictEqual((el as any).prop, '48');
+		});
 	});
 
 	it('should coerce initial value', () => {
@@ -338,6 +371,9 @@ describe('props', () => {
 		customElements.define(customElName(), El);
 		const el = new El();
 		document.body.appendChild(el);
-		assert.strictEqual(el.prop, '24-coerce');
+
+		return defer(() => {
+			assert.strictEqual(el.prop, '24-coerce');
+		});
 	});
 });
